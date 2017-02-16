@@ -20,6 +20,7 @@ void CheckLastColl(vector<vector<Node>>& field, int sizeX, int sizeY);
 void CheckColls(vector<vector<Node>>& field, int sizeX, int sizeY);
 
 void PrintMatrix(vector<vector<Node>>& field, int sizeX, int sizeY);
+void PrintSumAndWay(vector<vector<Node>> const&field, int sizeX, int sizeY);
 
 int main(int argc, char* argv[])
 {
@@ -36,37 +37,39 @@ int main(int argc, char* argv[])
 
 	ReadField(file, field, sizeX, sizeY);
 
-
 	CheckLastRow(field, sizeX, sizeY);
 	CheckLastColl(field, sizeX, sizeY);
 	CheckColls(field, sizeX, sizeY);
-	PrintMatrix(field, sizeX, sizeY);
 
-	pair<int, int> startPair = pair<int, int>(0, 0);
-	int sum = 0;
-
-	//while (startPair.first != sizeY - 2 || startPair.second != sizeX - 1)
-	//{
-	//	cout << startPair.first << " " << startPair.second << endl;
-	//	sum = field[startPair.first][startPair.second].price;
-	//	startPair = field[startPair.first][startPair.second].next;
-	//}
-
-	cout << sum;
+	PrintSumAndWay(field, sizeX, sizeY);
 
 	return 0;
 }
 
 void PrintMatrix(vector<vector<Node>>& field, int sizeX, int sizeY)
 {
-	for (size_t y = 0; y < sizeY; y++)
+	for (int y = 0; y < sizeY; y++)
 	{
-		for (size_t x = 0; x < sizeX; x++)
+		for (int x = 0; x < sizeX; x++)
 		{
 			cout << field[y][x].price << "(" << field[y][x].next.first << ", " << field[y][x].next.second << ") ";
 		}
 		cout << endl;
 	}
+}
+
+void PrintSumAndWay(vector<vector<Node>> const&field, int sizeX, int sizeY)
+{
+	cout << field[0][0].price << endl;
+
+	pair<int, int> startPair = pair<int, int>(0, 0);
+	while (startPair.first != sizeY - 1 || startPair.second != sizeX - 1)
+	{
+		cout << "(" << startPair.first + 1 << ", " << startPair.second + 1 << ")" << endl;
+		startPair = field[startPair.first][startPair.second].next;
+	}
+
+	cout << "(" << sizeY << ", " << sizeX << ")" << endl;
 }
 
 void CheckLastRow(vector<vector<Node>>& field, int sizeX, int sizeY)
@@ -114,10 +117,8 @@ void CheckColls(vector<vector<Node>>& field, int sizeX, int sizeY)
 				field[y][x].price += field[y + 1][x].price;
 				field[y][x].next = pair<int, int>(y + 1, x);
 			}
-			//cout << x << " ";
 			x--;
 		}
-		//cout << endl;
 		x = sizeX - 2;
 		y--;
 	}
@@ -140,8 +141,6 @@ void ReadField(ifstream& file, vector<vector<Node>>& field, size_t& sizeX, size_
 			file >> tmpPrice;
 			field[i][j].price = tmpPrice;
 			field[i][j].next = pair<int, int>(i, j);
-			//cout << "(" << i << ", " << j << ")";
 		}
-		//cout << endl;
 	}
 }
