@@ -20,7 +20,7 @@ void CheckLastColl(vector<vector<Node>>& field, int sizeX, int sizeY);
 void CheckColls(vector<vector<Node>>& field, int sizeX, int sizeY);
 
 void PrintMatrix(vector<vector<Node>>& field, int sizeX, int sizeY);
-void PrintSumAndWay(vector<vector<Node>> const&field, int sizeX, int sizeY);
+void PrintSumAndWay(vector<vector<Node>> const& field, int sizeX, int sizeY);
 
 int main(int argc, char* argv[])
 {
