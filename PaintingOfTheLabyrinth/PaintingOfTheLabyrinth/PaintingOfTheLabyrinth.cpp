@@ -4,9 +4,13 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <queue>
 
 char CORRIDOR_CELL_SYMBOL = '.';
 char WALL_CELL_SYMBOL = '#';
+char CHECKED_CELL_SYMBOL = 'X';
+size_t WALLS_WITHOUT_PAINT = 4;
+size_t WALL_AREA_SIZE = 9;
 
 using namespace std;
 
@@ -16,8 +20,12 @@ void CreateSourceMatrix(vector<vector<char>>& emptyVector, size_t matrixSize);
 void CreateMatrixBorder(vector<vector<char>>& matrix);
 void ReadMatrixFromFileToBorderMatrix(ifstream& file, vector<vector<char>>& matrix);
 
-// DEBUG FUNCTIONS
+int GetWallsCount(vector<vector<char>> const& matrixForCheck);
+void CheckCell(queue<pair<size_t, size_t>>& cells, vector<vector<char>>& matrix, int& wallsCount);
+
+//////////////////////////// DEBUG FUNCTIONS /////////////////////////////
 void WriteMatrix(vector<vector<char>> const& matrix);
+//////////////////////////////////////////////////////////////////////////
 
 int main(int argc, char* argv[])
 {
@@ -30,7 +38,10 @@ int main(int argc, char* argv[])
 	auto matrixSize = GetMatrixSizeFromFile(input);
 	auto matrix = GetMatrixFromFile(input, matrixSize);
 
-	(void)matrix;
+	auto wallsCount = GetWallsCount(matrix);
+
+	auto paintCount = (wallsCount - WALLS_WITHOUT_PAINT) * WALL_AREA_SIZE;
+	output << paintCount;
 
 	return 0;
 }
@@ -48,7 +59,6 @@ size_t GetMatrixSizeFromFile(ifstream& file)
 
 vector<vector<char>> GetMatrixFromFile(ifstream& file, size_t matrixSize)
 {
-	(void)file;
 	vector<vector<char>> matrix;
 
 	CreateSourceMatrix(matrix, matrixSize);
@@ -108,6 +118,47 @@ void ReadMatrixFromFileToBorderMatrix(ifstream& file, vector<vector<char>>& matr
 	}
 }
 
+int GetWallsCount(vector<vector<char>> const& matrixForCheck)
+{
+	auto matrix = matrixForCheck;
+	int wallsCount = 0;
+	queue<pair<size_t, size_t>> cells;
+	pair<size_t, size_t> startCellAdress(1, 1);
+
+	cells.push(startCellAdress);
+
+	while (!cells.empty())
+	{
+		CheckCell(cells, matrix, wallsCount);
+	}
+
+	return wallsCount;
+}
+
+void CheckCell(queue<pair<size_t, size_t>>& cells, vector<vector<char>>& matrix, int& wallsCount)
+{
+	auto adress = cells.front();
+	cells.pop();
+	auto i = adress.first;
+	auto j = adress.second;
+
+	if (matrix[i][j] != CHECKED_CELL_SYMBOL)
+	{
+		matrix[i][j] = CHECKED_CELL_SYMBOL;
+
+		if (matrix[i][j + 1] == WALL_CELL_SYMBOL) wallsCount++;
+		else if (matrix[i][j + 1] == CORRIDOR_CELL_SYMBOL) cells.push(pair<size_t, size_t>(i, j + 1));
+
+		if (matrix[i][j - 1] == WALL_CELL_SYMBOL) wallsCount++;
+		else if (matrix[i][j - 1] == CORRIDOR_CELL_SYMBOL) cells.push(pair<size_t, size_t>(i, j - 1));
+		
+		if (matrix[i + 1][j] == WALL_CELL_SYMBOL) wallsCount++;
+		else if (matrix[i + 1][j] == CORRIDOR_CELL_SYMBOL) cells.push(pair<size_t, size_t>(i + 1, j));
+		
+		if (matrix[i - 1][j] == WALL_CELL_SYMBOL) wallsCount++;
+		else if (matrix[i - 1][j] == CORRIDOR_CELL_SYMBOL) cells.push(pair<size_t, size_t>(i - 1, j));
+	}
+}
 
 // DEBUG FUNCTIONS
 
