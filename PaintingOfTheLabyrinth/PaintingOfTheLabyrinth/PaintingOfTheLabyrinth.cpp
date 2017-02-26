@@ -32,15 +32,15 @@ int main(int argc, char* argv[])
 	(void)argc;
 	(void)argv;
 
-	ifstream input("INPUT.TXT");
-	ofstream output("OUTPUT.TXT");
+	ifstream input("input.txt");
+	ofstream output("output.txt");
 
 	auto matrixSize = GetMatrixSizeFromFile(input);
 	auto matrix = GetMatrixFromFile(input, matrixSize);
 
 	auto wallsCount = GetWallsCount(matrix);
 
-	auto paintCount = (wallsCount - WALLS_WITHOUT_PAINT) * WALL_AREA_SIZE;
+	auto paintCount = (wallsCount) * WALL_AREA_SIZE;
 	output << paintCount;
 
 	return 0;
@@ -121,7 +121,7 @@ void ReadMatrixFromFileToBorderMatrix(ifstream& file, vector<vector<char>>& matr
 int GetWallsCount(vector<vector<char>> const& matrixForCheck)
 {
 	auto matrix = matrixForCheck;
-	int wallsCount = 0;
+	int wallsCount = 0 - 2;
 	queue<pair<size_t, size_t>> cells;
 	pair<size_t, size_t> startCellAdress(1, 1);
 
@@ -141,9 +141,15 @@ void CheckCell(queue<pair<size_t, size_t>>& cells, vector<vector<char>>& matrix,
 	cells.pop();
 	auto i = adress.first;
 	auto j = adress.second;
+	auto endAdress = matrix.size() - 2;
 
 	if (matrix[i][j] != CHECKED_CELL_SYMBOL)
 	{
+		if (i == endAdress && j == endAdress)
+		{
+			wallsCount -= 2;
+		}
+
 		matrix[i][j] = CHECKED_CELL_SYMBOL;
 
 		if (matrix[i][j + 1] == WALL_CELL_SYMBOL) wallsCount++;
