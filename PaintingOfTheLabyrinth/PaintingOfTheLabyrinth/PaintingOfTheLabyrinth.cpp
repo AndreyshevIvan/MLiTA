@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
 
 	auto wallsCount = GetWallsCount(matrix);
 
-	auto paintCount = (wallsCount) * WALL_AREA_SIZE;
+	auto paintCount = (wallsCount - WALLS_WITHOUT_PAINT) * WALL_AREA_SIZE;
 	output << paintCount;
 
 	return 0;
@@ -121,15 +121,33 @@ void ReadMatrixFromFileToBorderMatrix(ifstream& file, vector<vector<char>>& matr
 int GetWallsCount(vector<vector<char>> const& matrixForCheck)
 {
 	auto matrix = matrixForCheck;
-	int wallsCount = 0 - 2;
-	queue<pair<size_t, size_t>> cells;
-	pair<size_t, size_t> startCellAdress(1, 1);
+	int wallsCount = 0;
+	bool isEndChecked = false;
 
+	size_t endAdress = matrix.front().size() - 2;
+	pair<size_t, size_t> startCellAdress(1, 1);
+	pair<size_t, size_t> endCellAdress(endAdress, endAdress);
+
+	queue<pair<size_t, size_t>> cells;
 	cells.push(startCellAdress);
 
 	while (!cells.empty())
 	{
+		if (cells.front() == endCellAdress)
+		{
+			isEndChecked = true;
+		}
+
 		CheckCell(cells, matrix, wallsCount);
+	}
+
+	if (!isEndChecked)
+	{
+		cells.push(endCellAdress);
+		while (!cells.empty())
+		{
+			CheckCell(cells, matrix, wallsCount);
+		}
 	}
 
 	return wallsCount;
@@ -137,19 +155,14 @@ int GetWallsCount(vector<vector<char>> const& matrixForCheck)
 
 void CheckCell(queue<pair<size_t, size_t>>& cells, vector<vector<char>>& matrix, int& wallsCount)
 {
+	WriteMatrix(matrix);
 	auto adress = cells.front();
 	cells.pop();
 	auto i = adress.first;
 	auto j = adress.second;
-	auto endAdress = matrix.size() - 2;
 
 	if (matrix[i][j] != CHECKED_CELL_SYMBOL)
 	{
-		if (i == endAdress && j == endAdress)
-		{
-			wallsCount -= 2;
-		}
-
 		matrix[i][j] = CHECKED_CELL_SYMBOL;
 
 		if (matrix[i][j + 1] == WALL_CELL_SYMBOL) wallsCount++;
