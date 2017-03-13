@@ -182,6 +182,11 @@ int GetBestStepsCount(vector<vector<Node>> const& beehiveToSearch)
 				if (beehive[i][j].type != ENEMY)
 				{
 					MarkStepsFromNode(beehive[i][j], finishStep);
+
+					if (finishStep == 39)
+					{
+						WriteBeehive(beehiveToSearch, false);
+					}
 				}
 			}
 		}
@@ -208,7 +213,6 @@ void MarkStepsFromNode(Node& node, int& finishStep)
 void CheckNode(queue<Node*>& nodesToCheck, Node* node, bool& isFinish, int& finishStep)
 {
 	int step = node->stepsCount;
-	node->isChecked = true;
 
 	if (node->type != ENEMY && !isFinish)
 	{
@@ -217,31 +221,37 @@ void CheckNode(queue<Node*>& nodesToCheck, Node* node, bool& isFinish, int& fini
 			if (node->left && !node->left->isChecked)
 			{
 				node->left->stepsCount = step + 1;
+				node->left->isChecked = true;
 				nodesToCheck.push(node->left);
 			}
 			if (node->right && !node->right->isChecked)
 			{
 				node->right->stepsCount = step + 1;
+				node->right->isChecked = true;
 				nodesToCheck.push(node->right);
 			}
 			if (node->topLeft && !node->topLeft->isChecked)
 			{
 				node->topLeft->stepsCount = step + 1;
+				node->topLeft->isChecked = true;
 				nodesToCheck.push(node->topLeft);
 			}
 			if (node->topRight && !node->topRight->isChecked)
 			{
 				node->topRight->stepsCount = step + 1;
+				node->topRight->isChecked = true;
 				nodesToCheck.push(node->topRight);
 			}
 			if (node->bottomLeft && !node->bottomLeft->isChecked)
 			{
 				node->bottomLeft->stepsCount = step + 1;
+				node->bottomLeft->isChecked = true;
 				nodesToCheck.push(node->bottomLeft);
 			}
 			if (node->bottomRight && !node->bottomRight->isChecked)
 			{
 				node->bottomRight->stepsCount = step + 1;
+				node->bottomRight->isChecked = true;
 				nodesToCheck.push(node->bottomRight);
 			}
 		}
@@ -251,25 +261,6 @@ void CheckNode(queue<Node*>& nodesToCheck, Node* node, bool& isFinish, int& fini
 			isFinish = true;
 		}
 	}
-}
-
-int GetStepsToMaya(vector<vector<Node>>& beehive)
-{
-	int steps = 0;
-
-	for (size_t i = 0; i < beehive.size(); i++)
-	{
-		for (size_t j = 0; j < beehive[i].size(); j++)
-		{
-			if (beehive[i][j].type == MAYA)
-			{
-				steps = beehive[i][j].stepsCount;
-				break;
-			}
-		}
-	}
-
-	return steps;
 }
 
 // DEBUG
@@ -289,7 +280,15 @@ void WriteNode(Node const& node, bool isWriteLinks)
 {
 	cout << '[';
 
-	cout << node.type << ',';
+	cout << node.type;
+	if (node.stepsCount >= 10)
+	{
+		cout << "," << node.stepsCount;
+	}
+	else
+	{
+		cout << ", " << node.stepsCount;
+	}
 
 	if (isWriteLinks)
 	{
