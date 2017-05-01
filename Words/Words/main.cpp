@@ -56,7 +56,7 @@ void ReadWords(ifstream &input, string &keyWord, vector<string> &gameWords)
 Alphabet GetWordAlphabet(const string &word)
 {
 	Alphabet alphabet;
-	for (const auto &letter : word)
+	for (auto &letter : word)
 	{
 		auto searchPair = alphabet.find(letter);
 		if (searchPair == alphabet.end())
@@ -76,7 +76,7 @@ PriorityQueue GetAcceptedWords(const Alphabet &alphabet, const vector<string> &a
 	PriorityQueue acceptedWords;
 	points = 0;
 
-	for (const auto &word : allWords)
+	for (auto &word : allWords)
 	{
 		Alphabet testAlpthabet = alphabet;
 
@@ -87,12 +87,15 @@ PriorityQueue GetAcceptedWords(const Alphabet &alphabet, const vector<string> &a
 			{
 				break;
 			}
-			wordPair->second--;
+
 			if (i == word.size() - 1)
 			{
 				acceptedWords.push(word);
 				points += word.length();
+				break;
 			}
+
+			wordPair->second -= 1;
 		}
 	}
 
