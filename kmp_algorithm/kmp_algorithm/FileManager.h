@@ -43,4 +43,9 @@ public:
 			output << line << std::endl;
 		}
 	}
+	static void WriteAllText(const std::string &outFileName, const std::string &line)
+	{
+		auto text = { line };
+		WriteAllText(outFileName, text);
+	}
 };

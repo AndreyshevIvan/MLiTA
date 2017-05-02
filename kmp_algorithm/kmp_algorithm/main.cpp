@@ -7,6 +7,8 @@ namespace
 	std::string OUTPUT_FILE = "output.txt";
 }
 
+void WriteResults(const std::vector<std::pair<size_t, size_t>> &coordinates);
+
 int main()
 {
 	setlocale(LC_ALL, "");
@@ -17,9 +19,8 @@ int main()
 		auto pattern = inputText[0];
 		auto textFileName = inputText[1];
 		auto text = CFileManager::GetAllText(textFileName);
-
-		auto result = mlita::kmp_search(text, pattern);
-		CFileManager::WriteAllText(OUTPUT_FILE, inputText);
+		auto coordinates = mlita::kmpSearch(text, pattern);
+		WriteResults(coordinates);
 	}
 	catch (std::exception const& e)
 	{
@@ -28,4 +29,16 @@ int main()
 	}
 	
 	return 0;
+}
+
+void WriteResults(const std::vector<std::pair<size_t, size_t>> &coordinates)
+{
+	if (coordinates.empty())
+	{
+		CFileManager::WriteAllText(OUTPUT_FILE, "No\n");
+		return;
+	}
+
+	auto result = mlita::asText(coordinates, false);
+	CFileManager::WriteAllText(OUTPUT_FILE, result);
 }
