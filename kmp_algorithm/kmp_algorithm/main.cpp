@@ -1,4 +1,5 @@
 #include "FileManager.h"
+#include "Search.h"
 
 namespace
 {
@@ -8,16 +9,17 @@ namespace
 
 int main()
 {
+	setlocale(LC_ALL, "");
+
 	try
 	{
-		CFileManager fileManager(INPUT_FILE, OUTPUT_FILE);
+		auto inputText = CFileManager::GetAllText(INPUT_FILE);
+		auto pattern = inputText[0];
+		auto textFileName = inputText[1];
+		auto text = CFileManager::GetAllText(textFileName);
 
-		auto text = {
-			std::string("Hello, "),
-			std::string("World")
-		};
-
-		fileManager.WriteAllText(text);
+		auto result = mlita::kmp_search(text, pattern);
+		CFileManager::WriteAllText(OUTPUT_FILE, inputText);
 	}
 	catch (std::exception const& e)
 	{

@@ -7,15 +7,12 @@
 
 #include "Exceptions.h"
 
-typedef std::vector<std::string> Text;
-
 class CFileManager
 {
 public:
-	CFileManager(const std::string &inputFile, const std::string &outputFile)
+	static std::vector<std::string> GetAllText(const std::string &readFileName)
 	{
-		std::ifstream input(inputFile);
-		m_outputFileName = outputFile;
+		std::ifstream input(readFileName);
 
 		if (!input.is_open())
 		{
@@ -23,19 +20,18 @@ public:
 		}
 
 		std::string fileLine;
+		std::vector<std::string> fileText;
+
 		while (getline(input, fileLine))
 		{
-			m_fileText.push_back(fileLine);
+			fileText.push_back(fileLine);
 		}
-	}
 
-	Text GetAllText()
-	{
-		return m_fileText;
+		return fileText;
 	}
-	void WriteAllText(const Text &text)
+	static void WriteAllText(const std::string &outFileName, const std::vector<std::string> &text)
 	{
-		std::ofstream output(m_outputFileName);
+		std::ofstream output(outFileName);
 
 		if (!output.is_open())
 		{
@@ -47,9 +43,4 @@ public:
 			output << line << std::endl;
 		}
 	}
-
-private:
-	std::string m_outputFileName;
-	Text m_fileText;
-
 };
