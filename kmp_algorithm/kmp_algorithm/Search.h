@@ -15,16 +15,15 @@ typedef std::vector<size_t> StrCoords;
 typedef std::vector<std::pair<size_t, size_t>> TextCoords;
 
 static TextCoords kmpSearch(const Text &text, const std::string &pattern);
-static StrCoords getPatternCoords(const std::string &lineToScan, size_t patternLen);
+static StrCoords getPrefixArr(const std::string &lineToScan);
 static Text asText(const TextCoords &coordinates, bool isStartFromZero);
 
 _MLITA_LOCAL_BEGIN
 
-const char KMP_SEPARATOR = '@';
+TextCoords toTextCoordinates(const Text &srcText, StrCoords patternCoords);
+StrCoords calculatePatternCoords(const Text &srcText, const StrCoords &prefixArr);
 
-TextCoords clalcCoords(const Text &srcText, std::vector<size_t> patternCoords);
-
-TextCoords clalcCoords(const Text &srcText, std::vector<size_t> patternCoords)
+TextCoords toTextCoordinates(const Text &srcText, StrCoords patternCoords)
 {
 	TextCoords coordinates;
 	size_t strNum = 0;
@@ -55,11 +54,19 @@ TextCoords clalcCoords(const Text &srcText, std::vector<size_t> patternCoords)
 	return coordinates;
 }
 
+StrCoords calculatePatternCoords(const Text &srcText, const StrCoords &prefixArr)
+{
+	(void)srcText;
+	(void)prefixArr;
+	StrCoords coords;
+	return coords;
+}
+
 _MLITA_LOCAL_END
 
 TextCoords kmpSearch(const Text &text, const std::string &pattern)
 {
-	std::string allTextStr = pattern + KMP_SEPARATOR;
+	std::string allTextStr = pattern;
 
 	for (auto str : text)
 	{
@@ -68,15 +75,15 @@ TextCoords kmpSearch(const Text &text, const std::string &pattern)
 		allTextStr += addStr;
 	}
 
-	auto patternCoords = getPatternCoords(allTextStr, pattern.size());
+	auto prefixArr = getPrefixArr(pattern);
+	auto patternCoords = calculatePatternCoords(text, prefixArr);
 
-	return clalcCoords(text, patternCoords);
+	return toTextCoordinates(text, patternCoords);
 }
 
-StrCoords getPatternCoords(const std::string &lineToScan, size_t patternLen)
+StrCoords getPrefixArr(const std::string &lineToScan)
 {
-	StrCoords prefixArray(lineToScan.size());
-	StrCoords patternCoords;
+	StrCoords prefixArray(lineToScan.size(), 0);
 	auto is_equal = [=](char ch1, char ch2) {
 		return tolower(ch1) == tolower(ch2);
 	};
@@ -84,9 +91,9 @@ StrCoords getPatternCoords(const std::string &lineToScan, size_t patternLen)
 	for (size_t chNum = 1; chNum < lineToScan.size(); chNum++)
 	{
 		size_t lastPrefix = prefixArray[chNum - 1];
-		const char &prefixCh = lineToScan[chNum];
+		const char &scanCh = lineToScan[chNum];
 
-		while ((lastPrefix > 0) && !is_equal(prefixCh, lineToScan[lastPrefix]))
+		while ((lastPrefix > 0) && !is_equal(scanCh, lineToScan[lastPrefix]))
 		{
 			lastPrefix = prefixArray[lastPrefix - 1];
 		}
@@ -94,16 +101,12 @@ StrCoords getPatternCoords(const std::string &lineToScan, size_t patternLen)
 		if (is_equal(lineToScan[chNum], lineToScan[lastPrefix]))
 		{
 			lastPrefix++;
-			if (lastPrefix == patternLen)
-			{
-				patternCoords.push_back(chNum - 2 * patternLen);
-			}
 		}
 
 		prefixArray[chNum] = lastPrefix;
 	}
 
-	return patternCoords;
+	return prefixArray;
 }
 
 static Text asText(const TextCoords &coordinates, bool isStartFromZero)
@@ -118,7 +121,8 @@ static Text asText(const TextCoords &coordinates, bool isStartFromZero)
 			element.second++;
 		}
 
-		std::string line = std::to_string(element.first) + " " + std::to_string(element.second);
+		std::string line = std::to_string(element.first);
+		line += " " + std::to_string(element.second);
 		result.push_back(line);
 	}
 
