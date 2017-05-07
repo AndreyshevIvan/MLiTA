@@ -21,7 +21,7 @@ static Text asText(const TextCoords &coordinates, bool isStartFromZero);
 _MLITA_LOCAL_BEGIN
 
 TextCoords toTextCoordinates(const Text &srcText, StrCoords patternCoords);
-StrCoords calculatePatternCoords(const Text &srcText, const StrCoords &prefixArr);
+StrCoords calculatePatternCoords(const std::string &srcText, const std::string &pattern, const StrCoords &prefixArr);
 
 TextCoords toTextCoordinates(const Text &srcText, StrCoords patternCoords)
 {
@@ -54,19 +54,44 @@ TextCoords toTextCoordinates(const Text &srcText, StrCoords patternCoords)
 	return coordinates;
 }
 
-StrCoords calculatePatternCoords(const Text &srcText, const StrCoords &prefixArr)
+StrCoords calculatePatternCoords(const std::string &srcText, const std::string &pattern, const StrCoords &prefixArr)
 {
-	(void)srcText;
-	(void)prefixArr;
-	StrCoords coords;
-	return coords;
+	StrCoords coordinates;
+	size_t patternChPos = 0;
+
+	for (size_t i = 0; i < srcText.size(); i++)
+	{
+		char textCh = srcText[i];
+		while (patternChPos > 0 && pattern[patternChPos] != textCh)
+		{
+			patternChPos = prefixArr[patternChPos];
+		}
+
+		if (pattern[patternChPos] == textCh)
+		{
+			patternChPos++;
+		}
+
+		if (patternChPos == pattern.size() - 1)
+		{
+			coordinates.push_back(i - pattern.size() + 2);
+			patternChPos = prefixArr[patternChPos - 1];
+		}
+	}
+
+	return coordinates;
 }
 
 _MLITA_LOCAL_END
 
 TextCoords kmpSearch(const Text &text, const std::string &pattern)
 {
-	std::string allTextStr = pattern;
+	if (pattern == "")
+	{
+		throw CInputException("Pattern is empty!");
+	}
+
+	std::string allTextStr;
 
 	for (auto str : text)
 	{
@@ -76,7 +101,7 @@ TextCoords kmpSearch(const Text &text, const std::string &pattern)
 	}
 
 	auto prefixArr = getPrefixArr(pattern);
-	auto patternCoords = calculatePatternCoords(text, prefixArr);
+	auto patternCoords = calculatePatternCoords(allTextStr, pattern, prefixArr);
 
 	return toTextCoordinates(text, patternCoords);
 }
