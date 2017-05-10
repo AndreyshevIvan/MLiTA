@@ -1,6 +1,5 @@
 #pragma once
 #include <locale>
-#include <boost/algorithm/string.hpp>
 
 #define _MLITA_LOCAL_BEGIN	namespace {
 #define _MLITA_LOCAL_END	}
@@ -22,6 +21,12 @@ _MLITA_LOCAL_BEGIN
 
 TextCoords toTextCoordinates(const Text &srcText, StrCoords patternCoords);
 StrCoords calculatePatternCoords(const std::string &srcText, const std::string &pattern, const StrCoords &prefixArr);
+bool isEqual(char ch1, char ch2);
+
+bool isEqual(char ch1, char ch2)
+{
+	return tolower(ch1) == tolower(ch2);
+};
 
 TextCoords toTextCoordinates(const Text &srcText, StrCoords patternCoords)
 {
@@ -62,12 +67,12 @@ StrCoords calculatePatternCoords(const std::string &srcText, const std::string &
 	for (size_t i = 0; i < srcText.size(); i++)
 	{
 		char textCh = srcText[i];
-		while (patternChPos > 0 && pattern[patternChPos] != textCh)
+		while (patternChPos > 0 && !isEqual(pattern[patternChPos], textCh))
 		{
 			patternChPos = prefixArr[patternChPos];
 		}
 
-		if (pattern[patternChPos] == textCh)
+		if (isEqual(pattern[patternChPos], textCh))
 		{
 			patternChPos++;
 		}
@@ -109,21 +114,18 @@ TextCoords kmpSearch(const Text &text, const std::string &pattern)
 StrCoords getPrefixArr(const std::string &lineToScan)
 {
 	StrCoords prefixArray(lineToScan.size(), 0);
-	auto is_equal = [=](char ch1, char ch2) {
-		return tolower(ch1) == tolower(ch2);
-	};
 
 	for (size_t chNum = 1; chNum < lineToScan.size(); chNum++)
 	{
 		size_t lastPrefix = prefixArray[chNum - 1];
 		const char &scanCh = lineToScan[chNum];
 
-		while ((lastPrefix > 0) && !is_equal(scanCh, lineToScan[lastPrefix]))
+		while ((lastPrefix > 0) && !isEqual(scanCh, lineToScan[lastPrefix]))
 		{
 			lastPrefix = prefixArray[lastPrefix - 1];
 		}
 
-		if (is_equal(lineToScan[chNum], lineToScan[lastPrefix]))
+		if (isEqual(lineToScan[chNum], lineToScan[lastPrefix]))
 		{
 			lastPrefix++;
 		}
