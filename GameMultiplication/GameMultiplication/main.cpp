@@ -1,27 +1,24 @@
 #include "Game.h"
-#include "Exception.h"
 
 namespace
 {
-	const std::string INPUT = "input.txt";
-	const std::string OUTPUT = "output.txt";
+	const std::string INPUT_FILE = "input.txt";
+	const std::string OUTPUT_FILE = "output.txt";
 }
 
 int main()
 {
 	try
 	{
-		CGame multiplicationGame(INPUT);
+		CGame multiplicationGame(INPUT_FILE);
 		multiplicationGame.Start();
-		multiplicationGame.PrintResults(OUTPUT);
+		multiplicationGame.PrintResults(OUTPUT_FILE);
 	}
 	catch (const std::exception &e)
 	{
 		std::cerr << e.what();
-		system("pause");
 		return 1;
 	}
 
-	system("pause");
 	return 0;
 }

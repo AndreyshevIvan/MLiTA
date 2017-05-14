@@ -4,11 +4,12 @@
 #include <string>
 #include <sstream>
 #include <vector>
-#include "Exception.h"
+#include <map>
+#include <exception>
 
 namespace
 {
-	const std::string NULL_RESULTS = "The game has never been played!\n";
+	const std::vector<size_t> GAME_MULTIPLIERS = { 2, 3, 4, 5 };
 }
 
 class CGame
@@ -20,16 +21,16 @@ public:
 
 		if (!input.is_open())
 		{
-			throw CException("Input can not be opened!\n");
+			throw std::exception("Input can not be opened!\n");
 		}
 
 		std::string line;
 		getline(input, line);
 		std::stringstream stream(line);
 		stream >> m_partsCount;
-		m_finalsNumbers.resize(m_partsCount);
+		m_winNumbers.resize(m_partsCount);
 
-		for (auto &number : m_finalsNumbers)
+		for (auto &number : m_winNumbers)
 		{
 			getline(input, line);
 			number = std::stoi(line);
@@ -39,12 +40,19 @@ public:
 	void Start()
 	{
 		m_isPlayed = true;
+
+		for (auto winNumber : m_winNumbers)
+		{
+			m_moveVariants.clear();
+			auto isFirstWin = IsFirstWin(1, winNumber);
+			AddResult(isFirstWin);
+		}
 	}
 	void PrintResults(const std::string &outFileName)
 	{
 		if (!m_isPlayed)
 		{
-			throw CException(NULL_RESULTS);
+			throw std::exception("The game has never been played!\n");
 		}
 
 		std::ofstream output(outFileName);
@@ -52,8 +60,37 @@ public:
 	}
 
 private:
-	size_t m_partsCount = 0;
-	std::vector<size_t> m_finalsNumbers;
+	bool IsFirstWin(size_t startNumber, size_t winNumber)
+	{
+		auto move = m_moveVariants.find(startNumber);
+		if (move != m_moveVariants.end())
+		{
+			return move->second;
+		}
+
+		for (auto multiplier : GAME_MULTIPLIERS)
+		{
+			size_t newStart = startNumber * multiplier;
+
+			if (newStart >= winNumber || !IsFirstWin(newStart, winNumber))
+			{
+				m_moveVariants.insert(std::make_pair(startNumber, true));
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	void AddResult(bool isFirstWin)
+	{
+		auto result = (isFirstWin) ? "1\n" : "2\n";
+		m_results += result;
+	}
+
 	bool m_isPlayed = false;
+	size_t m_partsCount = 0;
 	std::string m_results;
+	std::vector<size_t> m_winNumbers;
+	std::map<size_t, bool> m_moveVariants;
 };
