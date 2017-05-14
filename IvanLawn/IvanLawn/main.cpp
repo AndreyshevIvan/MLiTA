@@ -28,11 +28,17 @@ size_t Calculate(Rect rect, Circle circle)
 {
 	size_t result = 0;
 
-	for (int y = rect.y; y >= rect.y - rect.height; y--)
+	int largeY = (rect.y > circle.maxY) ? circle.maxY: rect.y;
+	int smallY = (rect.y - rect.height > circle.minY) ? rect.y - rect.height : circle.minY;
+
+	int largeX = (rect.x + rect.width < circle.maxX) ? rect.x + rect.width : circle.maxX;
+	int smallX = (rect.x > circle.minX) ? rect.x : circle.minX;
+
+	for (int y = largeY; y >= smallY; y--)
 	{
-		for (int x = rect.x; x <= rect.x + rect.width; x++)
+		for (int x = smallX; x <= largeX; x++)
 		{
-			if (x >= circle.minX && x <= circle.maxX && circle.Contain(x, y))
+			if (circle.Contain(x, y))
 			{
 				result++;
 			}

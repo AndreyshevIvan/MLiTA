@@ -14,6 +14,8 @@ struct Circle
 		this->radius = radius;
 		this->minX = x - radius;
 		this->maxX = x + radius;
+		this->maxY = y + radius;
+		this->minY = y - radius;
 	}
 
 	bool Contain(int xx, int yy)
@@ -27,6 +29,8 @@ struct Circle
 	int radius;
 	int minX;
 	int maxX;
+	int maxY;
+	int minY;
 };
 
 struct Rect
