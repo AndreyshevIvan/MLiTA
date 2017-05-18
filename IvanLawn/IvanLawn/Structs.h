@@ -1,6 +1,4 @@
 #pragma once
-#include <string>
-#include <cmath>
 
 struct Circle
 {
@@ -18,10 +16,15 @@ struct Circle
 		this->minY = y - radius;
 	}
 
-	bool Contain(int xx, int yy)
+	std::pair<int, int> GetXPointsFromLine(int yy)
 	{
-		auto distance = pow(xx - x, 2) + pow(yy - y, 2);
-		return sqrt(distance) <= radius;
+		int minusC = radius * radius - (yy - y) * (yy - y) - x * x;
+		int disc = 4 * x * x + 4 * minusC;
+
+		int x1 = (x - (int)(sqrt(disc) + 0.5) / 2);
+		int x2 = (x + (int)(sqrt(disc) + 0.5) / 2);
+
+		return std::make_pair(x1, x2);
 	}
 
 	int x;
@@ -46,8 +49,8 @@ struct Rect
 		width = (x1 > x2) ? x1 - x2 : x2 - x1;
 		height = (y1 > y2) ? y1 - y2 : y2 - y1;
 
-		width = abs(width);
-		height = abs(height);
+		width = std::abs(width);
+		height = std::abs(height);
 	}
 
 	int x; // top left x

@@ -1,15 +1,8 @@
 #pragma once
 #include "Structs.h"
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <string>
 
 namespace
 {
-	const std::string INPUT_FILE = "input.txt";
-	const std::string OUTPUT_FILE = "output.txt";
-
 	Rect ReadRect(std::string &coordsStr);
 	Circle ReadCircle(std::string &coordsStr);
 
@@ -47,12 +40,10 @@ namespace
 
 void ReadInput(Rect &rect, Circle &circle);
 void PrintResult(size_t result);
-void Write(const Rect &rect);
-void Write(const Circle &circle);
 
 void ReadInput(Rect &rect, Circle &circle)
 {
-	std::ifstream input(INPUT_FILE);
+	std::ifstream input("input.txt");
 	std::string line;
 
 	getline(input, line);
@@ -63,21 +54,6 @@ void ReadInput(Rect &rect, Circle &circle)
 }
 void PrintResult(size_t result)
 {
-	std::ofstream output(OUTPUT_FILE);
+	std::ofstream output("output.txt");
 	output << result << std::endl;
-}
-void Write(const Rect &rect)
-{
-	std::cout << "Rectangle:\n"
-		<< "X: " << rect.x << std::endl
-		<< "Y: " << rect.y << std::endl
-		<< "Width: " << rect.width << std::endl
-		<< "Height: " << rect.height << std::endl;
-}
-void Write(const Circle &circle)
-{
-	std::cout << "Circle:\n"
-		<< "X: " << circle.x << std::endl
-		<< "Y: " << circle.y << std::endl
-		<< "Radius: " << circle.radius << std::endl;
 }
