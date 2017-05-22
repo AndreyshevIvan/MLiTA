@@ -1,30 +1,61 @@
 #include <fstream>
 #include <string>
 #include <sstream>
-#include "SegmentTree.h"
+#include <exception>
+#include <iostream>
+#include "PowerLine.h"
 
-void EnterProcess(std::ifstream &input, std::ofstream &output, CSegemntTree tree);
+void EnterProcess(std::ifstream &input, std::ofstream &output, CPowerLine &powerLine);
 void ReadInput(std::ifstream &input, int &columnCount, int &commandsCount);
 
 int main()
 {
-	std::ifstream input("input.txt");
-	std::ofstream output("output.txt");
-	int columnCount;
-	int commandsCount;
+	try
+	{
+		std::ifstream input("input.txt");
+		std::ofstream output("output.txt");
 
-	ReadInput(input, columnCount, commandsCount);
-	std::vector<int> arr(columnCount - 1, 0);
-	CSegemntTree tree(arr);
+		int columnCount;
+		int commandsCount;
 
-	EnterProcess(input, output, tree);
+		ReadInput(input, columnCount, commandsCount);
+		CPowerLine powerLine(columnCount);
+		EnterProcess(input, output, powerLine);
+	}
+	catch (const std::exception &e)
+	{
+		std::cerr << e.what() << std::endl;
+		return 1;
+	}
+
+	return 0;
 }
 
-void EnterProcess(std::ifstream &input, std::ofstream &output, CSegemntTree tree)
+void EnterProcess(std::ifstream &input, std::ofstream &output, CPowerLine &powerLine)
 {
-	(void)input;
-	(void)output;
-	(void)tree;
+	std::string command;
+	int cmdType;
+
+	while (getline(input, command))
+	{
+		std::stringstream stream = std::stringstream(command);
+		size_t leftColumn;
+		size_t rightColumn;
+		stream >> cmdType;
+		stream >> leftColumn;
+		stream >> rightColumn;
+
+		if (cmdType == Command::ADD)
+		{
+			int snowCount;
+			stream >> snowCount;
+			powerLine.AddSnow(leftColumn, rightColumn, snowCount);
+		}
+		else if (cmdType == Command::INFO)
+		{
+			output << powerLine.GetInfo(leftColumn, rightColumn) << std::endl;
+		}
+	}
 }
 
 void ReadInput(std::ifstream &input, int &columnCount, int &commandsCount)
