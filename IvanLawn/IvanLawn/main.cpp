@@ -5,7 +5,7 @@
 #include <sstream>
 #include <string>
 
-typedef std::pair<int, int> Interval;
+typedef std::pair<double, double> Interval;
 
 struct Circle
 {
@@ -18,19 +18,25 @@ struct Circle
 		this->maxX = x + radius;
 		this->maxY = y + radius;
 		this->minY = y - radius;
+		sqrR = radius * radius;
 	}
 
-	Interval GetContainInterval(int yy)
-	{
-		if (yy == y)
-		{
-			return std::make_pair(x - radius, x + radius);
-		}
+	Interval GetPointsOnLine(int XX)
+	{/*
+		double dXX = (XX < x) ? (x - XX) : (XX - x);
+		double halfLine = sqrt(sqrR - pow(dXX, 2));
 
-		int dRadius = (yy > y) ? (yy - y) : (y - yy);
-		int halfContain = (int)sqrt(pow(radius, 2) - pow(dRadius, 2));
+		return std::make_pair(y - halfLine, y + halfLine);
+		*/
+		
+		double C = y * y - sqrR + (XX - x) * (XX - x);
+		double D = (y * y) - C;
 
-		return std::make_pair(x - halfContain, x + halfContain);
+		double y1 = y - sqrt(D);
+		double y2 = y + sqrt(D);
+
+		return std::make_pair(y1, y2);
+		
 	}
 
 	int x;
@@ -40,6 +46,7 @@ struct Circle
 	int maxX;
 	int maxY;
 	int minY;
+	int sqrR;
 };
 struct Rect
 {
@@ -61,6 +68,8 @@ size_t Calculate(Rect rect, Circle circle);
 Rect ReadRect(std::ifstream &input);
 Circle ReadCircle(std::ifstream &input);
 void PrintResult(size_t result, const std::string &fileName);
+int min(int a, int b);
+int max(int a, int b);
 
 int main()
 {
@@ -78,20 +87,20 @@ size_t Calculate(Rect rect, Circle circle)
 {
 	size_t result = 0;
 
-	int maxY = (rect.y + rect.height > circle.maxY) ? circle.maxY : rect.y + rect.height;
-	int minY = (rect.y > circle.minY) ? rect.y : circle.minY;
+	int maxY = min(rect.y + rect.height, circle.maxY);
+	int minY = max(rect.y, circle.minY);
 
-	int maxX = (rect.x + rect.width < circle.maxX) ? rect.x + rect.width : circle.maxX;
-	int minX = (rect.x > circle.minX) ? rect.x : circle.minX;
+	int maxX = min(rect.x + rect.width, circle.maxX);
+	int minX = max(rect.x, circle.minX);
 
-	for (int y = minY; y <= maxY; y++)
+	for (int x = minX; x <= maxX; x++)
 	{
-		Interval interval = circle.GetContainInterval(y);
+		Interval interval = circle.GetPointsOnLine(x);
 
-		int newMinX = (minX < interval.first) ? interval.first : minX;
-		int newMaxX = (maxX > interval.second) ? interval.second : maxX;
+		int newMaxY = min(maxY, interval.second);
+		int newMinY = max(minY, interval.first);
 
-		result += (newMaxX - newMinX + 1);
+		result += (newMaxY - newMinY + 1);
 	}
 
 	return result;
@@ -135,4 +144,14 @@ void PrintResult(size_t result, const std::string &fileName)
 {
 	std::ofstream output(fileName);
 	output << result << std::endl;
+}
+
+int min(int a, int b)
+{
+	return (a < b) ? a : b;
+}
+
+int max(int a, int b)
+{
+	return (a > b) ? a : b;
 }

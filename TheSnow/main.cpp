@@ -5,22 +5,27 @@
 #include <iostream>
 #include "PowerLine.h"
 
-void EnterProcess(std::ifstream &input, std::ofstream &output, CPowerLine &powerLine);
+namespace
+{
+	const std::string INPUT_FILE = "input.txt";
+	const std::string OUTPUT_FILE = "output.txt";
+}
+
+void EnterProcess(std::ifstream &input, CPowerLine &powerLine);
 void ReadInput(std::ifstream &input, int &columnCount, int &commandsCount);
 
 int main()
 {
 	try
 	{
-		std::ifstream input("input.txt");
-		std::ofstream output("output.txt");
+		std::ifstream input(INPUT_FILE);
 
 		int columnCount;
 		int commandsCount;
 
 		ReadInput(input, columnCount, commandsCount);
 		CPowerLine powerLine(columnCount);
-		EnterProcess(input, output, powerLine);
+		EnterProcess(input, powerLine);
 	}
 	catch (const std::exception &e)
 	{
@@ -31,8 +36,9 @@ int main()
 	return 0;
 }
 
-void EnterProcess(std::ifstream &input, std::ofstream &output, CPowerLine &powerLine)
+void EnterProcess(std::ifstream &input, CPowerLine &powerLine)
 {
+	std::ofstream output(OUTPUT_FILE);
 	std::string command;
 	int cmdType;
 

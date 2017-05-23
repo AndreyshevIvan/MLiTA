@@ -1,17 +1,16 @@
 #pragma once
 #include <vector>
-#include <map>
 #include <algorithm>
 
 class CSegemntTree
 {
 public:
-	CSegemntTree(const std::vector<int> arr)
+	CSegemntTree(const std::vector<int> initArray)
 	{
-		const size_t &arrSize = arr.size();
+		const size_t &arrSize = initArray.size();
 		m_tree = std::vector<int>(arrSize * 4, 0);
 		m_maxIndex = arrSize - 1;
-		Build(arr, 1, 0, m_maxIndex);
+		Build(initArray, 1, 0, m_maxIndex);
 	}
 	int GetMaxIndex() const
 	{
