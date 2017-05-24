@@ -1,157 +1,80 @@
-#include <string>
-#include <cmath>
 #include <iostream>
 #include <fstream>
-#include <sstream>
-#include <string>
+#include <algorithm>
+#include <cmath>
 
-typedef std::pair<double, double> Interval;
+using namespace std;
 
 struct Circle
 {
-	Circle(int x, int y, size_t radius)
-	{
-		this->x = x;
-		this->y = y;
-		this->radius = radius;
-		this->minX = x - radius;
-		this->maxX = x + radius;
-		this->maxY = y + radius;
-		this->minY = y - radius;
-		sqrR = radius * radius;
-	}
-
-	Interval GetPointsOnLine(int XX)
-	{/*
-		double dXX = (XX < x) ? (x - XX) : (XX - x);
-		double halfLine = sqrt(sqrR - pow(dXX, 2));
-
-		return std::make_pair(y - halfLine, y + halfLine);
-		*/
-		
-		double C = y * y - sqrR + (XX - x) * (XX - x);
-		double D = (y * y) - C;
-
-		double y1 = y - sqrt(D);
-		double y2 = y + sqrt(D);
-
-		return std::make_pair(y1, y2);
-		
-	}
-
 	int x;
 	int y;
 	int radius;
-	int minX;
-	int maxX;
-	int maxY;
-	int minY;
-	int sqrR;
 };
 struct Rect
 {
-	Rect(int x1, int y1, int x2, int y2)
-	{
-		x = x1;
-		y = y1;
-		width = x2 - x1;
-		height = y2 - y1;
-	}
+	int x1;
+	int y1;
+	int x2;
+	int y2;
 
-	int x;
-	int y;
-	int width = 0;
-	int height = 0;
+	size_t LineIntersectsCount(int lineX, int lineMinY, int lineMaxY)
+	{
+		if (lineX < x1 || lineX > x2 || lineMinY > y2 || lineMaxY < y1)
+		{
+			return 0;
+		}
+
+		return size_t(min(lineMaxY, y2) - max(lineMinY, y1) + 1);
+	}
 };
 
 size_t Calculate(Rect rect, Circle circle);
-Rect ReadRect(std::ifstream &input);
-Circle ReadCircle(std::ifstream &input);
-void PrintResult(size_t result, const std::string &fileName);
-int min(int a, int b);
-int max(int a, int b);
+void ReadInput(std::ifstream &input, Rect &rect, Circle &circle);
 
 int main()
 {
 	std::ifstream input("input.txt");
-	Rect rect = ReadRect(input);
-	Circle circle = ReadCircle(input);
+	std::ofstream output("output.txt");
+
+	Rect rect;
+	Circle circle;
+	ReadInput(input, rect, circle);
 
 	size_t result = Calculate(rect, circle);
-	PrintResult(result, "output.txt");
+	output << result;
 
 	return 0;
 }
 
 size_t Calculate(Rect rect, Circle circle)
 {
-	size_t result = 0;
+	int centerMinY = circle.y - circle.radius;
+	int centerMaxY = circle.y + circle.radius;
+	size_t result = rect.LineIntersectsCount(circle.x, centerMinY, centerMaxY);
+	int currentY = circle.radius;
 
-	int maxY = min(rect.y + rect.height, circle.maxY);
-	int minY = max(rect.y, circle.minY);
-
-	int maxX = min(rect.x + rect.width, circle.maxX);
-	int minX = max(rect.x, circle.minX);
-
-	for (int x = minX; x <= maxX; x++)
+	for (int currentX = 1; currentX <= circle.radius; currentX++)
 	{
-		Interval interval = circle.GetPointsOnLine(x);
+		while (pow(currentX, 2) + pow(currentY, 2) > pow(circle.radius, 2))
+		{
+			currentY--;
+		}
 
-		int newMaxY = min(maxY, interval.second);
-		int newMinY = max(minY, interval.first);
-
-		result += (newMaxY - newMinY + 1);
+		int minY = circle.y - currentY;
+		int maxY = circle.y + currentY;
+		int leftX = circle.x - currentX;
+		int rightX = circle.x + currentX;
+		size_t leftCount = rect.LineIntersectsCount(rightX, minY, maxY);
+		size_t rightCount = rect.LineIntersectsCount(leftX, minY, maxY);
+		result += (leftCount + rightCount);
 	}
 
 	return result;
 }
 
-Rect ReadRect(std::ifstream &input)
+void ReadInput(std::ifstream &input, Rect &rect, Circle &circle)
 {
-	std::string line;
-	getline(input, line);
-	std::stringstream stream(line);
-
-	int x1;
-	int y1;
-	int x2;
-	int y2;
-
-	stream >> x1;
-	stream >> y1;
-	stream >> x2;
-	stream >> y2;
-
-	return Rect(x1, y1, x2, y2);
-}
-Circle ReadCircle(std::ifstream &input)
-{
-	std::string line;
-	getline(input, line);
-	std::stringstream stream(line);
-
-	int x;
-	int y;
-	size_t radius;
-
-	stream >> x;
-	stream >> y;
-	stream >> radius;
-
-	return Circle(x, y, radius);
-}
-void PrintResult(size_t result, const std::string &fileName)
-{
-	std::ofstream output(fileName);
-	output << result << std::endl;
-}
-
-int min(int a, int b)
-{
-	return (a < b) ? a : b;
-}
-
-int max(int a, int b)
-{
-	return (a > b) ? a : b;
+	input >> rect.x1 >> rect.y1 >> rect.x2 >> rect.y2;
+	input >> circle.x >> circle.y >> circle.radius;
 }
