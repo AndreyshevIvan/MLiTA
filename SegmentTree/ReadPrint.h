@@ -10,6 +10,7 @@ std::vector<int> ReadInput();
 void WriteRsq(int rsqResult);
 void WriteUpdate(int position, int delta);
 void WriteError(const std::string &message = "");
+void WriteGet(size_t position, int result);
 
 std::vector<int> ReadInput()
 {
@@ -35,6 +36,11 @@ void WriteRsq(int rsqResult)
 void WriteUpdate(int position, int delta)
 {
 	std::cout << "Increment element " << position << " on " << delta << std::endl;
+}
+
+void WriteGet(size_t position, int result)
+{
+	std::cout << "Element " << position << " equal: " << result << std::endl;
 }
 
 void WriteError(const std::string &message)
