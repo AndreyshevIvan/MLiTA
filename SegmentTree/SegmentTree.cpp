@@ -18,5 +18,14 @@ void CSegmentTree::Modify()
 
 void CSegmentTree::Build(const std::vector<int> &arr, int v, int vl, int vr)
 {
+	if (vl == vr)
+	{
+		m_tree[v] = arr[vl] - (vl ? arr[vl - 1] : 0);
+		return;
+	}
 
+	int vm = vl + (vr - vl) / 2;
+	Build(arr, 2 * v + 1, vl, vm);
+	Build(arr, 2 * v + 2, vm + 1, vr);
+	m_tree[v] = m_tree[2 * v + 1] + m_tree[2 * v + 2];
 }

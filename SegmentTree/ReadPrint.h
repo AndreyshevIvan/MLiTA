@@ -7,10 +7,9 @@
 #include <locale>
 
 std::vector<int> ReadInput();
-void WriteRsq(int rsqResult);
-void WriteUpdate(int position, int delta);
+void WriteSum(int result);
+void WriteUpdate(size_t from, size_t to, int delta);
 void WriteError(const std::string &message = "");
-void WriteGet(size_t position, int result);
 
 std::vector<int> ReadInput()
 {
@@ -28,19 +27,14 @@ std::vector<int> ReadInput()
 	return result;
 }
 
-void WriteRsq(int rsqResult)
+void WriteSum(int result)
 {
-	std::cout << "Rsq result = " << rsqResult << std::endl;
+	std::cout << "Sum result = " << result << std::endl;
 }
 
-void WriteUpdate(int position, int delta)
+void WriteUpdate(size_t from, size_t to, int delta)
 {
-	std::cout << "Increment element " << position << " on " << delta << std::endl;
-}
-
-void WriteGet(size_t position, int result)
-{
-	std::cout << "Element " << position << " equal: " << result << std::endl;
+	std::cout << "Update elements from " << from << " to " << to << " on " << delta << std::endl;
 }
 
 void WriteError(const std::string &message)
