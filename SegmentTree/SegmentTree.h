@@ -5,15 +5,22 @@
 class CSegmentTree
 {
 public:
-	CSegmentTree(const std::vector<int> &arr);
+	CSegmentTree(size_t arraySize);
 
-	long long Sum();
-	void Modify();
+	long long Sum(int v, int vl, int vr, int l, int r);
+	void Modify(int v, int vl, int vr, int l, int r, int delta);
+
+	int GetMaxIndex()
+	{
+		return m_maxIndex;
+	}
 
 private:
 	void Build(const std::vector<int> &arr, int v, int vl, int vr);
+	void Push(int v, int vl, int vr);
 
-	size_t m_maxIndex;
+	int m_maxIndex;
 	std::vector<int> m_tree;
+	std::vector<int> m_tAdding;
 
 };

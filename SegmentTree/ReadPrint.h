@@ -7,9 +7,9 @@
 #include <locale>
 
 std::vector<int> ReadInput();
-void WriteSum(int result);
+void WriteSum(long long result);
 void WriteUpdate(size_t from, size_t to, int delta);
-void WriteError(const std::string &message = "");
+void WriteArray(const std::vector<int> &arr);
 
 std::vector<int> ReadInput()
 {
@@ -27,29 +27,24 @@ std::vector<int> ReadInput()
 	return result;
 }
 
-void WriteSum(int result)
+void WriteSum(long long result)
 {
 	std::cout << "Sum result = " << result << std::endl;
 }
 
 void WriteUpdate(size_t from, size_t to, int delta)
 {
-	std::cout << "Update elements from " << from << " to " << to << " on " << delta << std::endl;
-}
-
-void WriteError(const std::string &message)
-{
-	std::cout << "Invalid command." << std::endl << message << std::endl;
+	std::cout << "Update elements from " << from
+		<< " to " << to
+		<< " on " << delta << std::endl;
 }
 
 void WriteArray(const std::vector<int> &arr)
 {
 	std::cout << "Array: ";
-
 	for (auto element : arr)
 	{
 		std::cout << element << " ";
 	}
-
 	std::cout << std::endl;
 }
