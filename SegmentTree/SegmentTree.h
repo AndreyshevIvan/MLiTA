@@ -21,7 +21,7 @@ public:
 	CSegmentTree::CSegmentTree(const std::vector<int> &startArr)
 	{
 		m_arraySize = startArr.size() - 1;
-		m_tree = std::vector<Segment>(m_arraySize * 4);
+		s = std::vector<Segment>(m_arraySize * 4);
 		Build(1, m_arraySize, 1, startArr);
 	}
 	int CSegmentTree::Get(size_t position)
@@ -50,7 +50,7 @@ private:
 	{
 		if (left == right)
 		{
-			m_tree[pos] = { arr[left], 0, arr[left], arr[left] };
+			s[pos] = { arr[left], 0, arr[left], arr[left] };
 			return;
 		}
 
@@ -62,16 +62,16 @@ private:
 		Build(left, leftEnd, leftPos, arr);
 		Build(rightBegin, right, rightPos, arr);
 
-		long long newSum = m_tree[leftPos].sum + m_tree[rightPos].sum;
-		int newMin = std::min(m_tree[leftPos].min, m_tree[rightPos].min);
-		m_tree[pos] = { UNDEFINED , 0, newSum, newMin };
+		long long newSum = s[leftPos].sum + s[rightPos].sum;
+		int newMin = std::min(s[leftPos].min, s[rightPos].min);
+		s[pos] = { UNDEFINED , 0, newSum, newMin };
 	}
 
 	int CSegmentTree::Get(int qPos, int left, int right, int pos)
 	{
-		if (m_tree[pos].value != UNDEFINED)
+		if (s[pos].value != UNDEFINED)
 		{
-			return m_tree[pos].value + m_tree[pos].extra;
+			return s[pos].value + s[pos].extra;
 		}
 
 		int leftEnd = (left + right) / 2;
@@ -81,10 +81,10 @@ private:
 
 		if (qPos <= leftEnd)
 		{
-			return Get(qPos, left, leftEnd, leftPos) + m_tree[pos].extra;
+			return Get(qPos, left, leftEnd, leftPos) + s[pos].extra;
 		}
 
-		return Get(qPos, rightBegin, right, rightPos) + m_tree[pos].extra;
+		return Get(qPos, rightBegin, right, rightPos) + s[pos].extra;
 	}
 
 	void Update(int qLeft, int qRight, int qValue, int left, int right, int pos)
@@ -97,7 +97,7 @@ private:
 		qRight = std::min(qRight, right);
 		if (qLeft == left && qRight == right)
 		{
-			m_tree[pos] = { qValue, 0, qValue, qValue * (right - left + 1) };
+			s[pos] = { qValue, 0, qValue, qValue * (right - left + 1) };
 			return;
 		}
 
@@ -106,25 +106,25 @@ private:
 		int leftPos = pos * 2;
 		int rightPos = leftPos + 1;
 
-		if (m_tree[pos].value != UNDEFINED)
+		if (s[pos].value != UNDEFINED)
 		{
-			Update(left, leftEnd, m_tree[pos].value + m_tree[pos].extra, left, leftEnd, leftPos);
-			Update(rightBegin, right, m_tree[pos].value + m_tree[pos].extra, rightBegin, right, rightPos);
-			m_tree[pos].value = UNDEFINED;
-			m_tree[pos].extra = 0;
+			Update(left, leftEnd, s[pos].value + s[pos].extra, left, leftEnd, leftPos);
+			Update(rightBegin, right, s[pos].value + s[pos].extra, rightBegin, right, rightPos);
+			s[pos].value = UNDEFINED;
+			s[pos].extra = 0;
 		}
 
-		if (m_tree[pos].extra != 0)
+		if (s[pos].extra != 0)
 		{
-			Add(left, leftEnd, m_tree[pos].extra, left, leftEnd, leftPos);
-			Add(rightBegin, right, m_tree[pos].extra, rightBegin, right, rightPos);
-			m_tree[pos].extra = 0;
+			Add(left, leftEnd, s[pos].extra, left, leftEnd, leftPos);
+			Add(rightBegin, right, s[pos].extra, rightBegin, right, rightPos);
+			s[pos].extra = 0;
 		}
 
 		Update(qLeft, qRight, qValue, left, leftEnd, leftPos);
 		Update(qLeft, qRight, qValue, rightBegin, right, rightPos);
-		m_tree[pos].sum = m_tree[leftPos].sum + m_tree[rightPos].sum;
-		m_tree[pos].min = std::min(m_tree[leftPos].min, m_tree[rightPos].min);
+		s[pos].sum = s[leftPos].sum + s[rightPos].sum;
+		s[pos].min = std::min(s[leftPos].min, s[rightPos].min);
 	}
 	
 	void Add(int qLeft, int qRight, int qExtra, int left, int right, int pos)
@@ -137,7 +137,7 @@ private:
 		qRight = std::min(qRight, right);
 		if (qLeft == left && qRight == right)
 		{
-			m_tree[pos].extra += qExtra;
+			s[pos].extra += qExtra;
 			return;
 		}
 
@@ -146,31 +146,31 @@ private:
 		int leftPos = pos * 2;
 		int rightPos = leftPos + 1;
 
-		if (m_tree[pos].value != UNDEFINED)
+		if (s[pos].value != UNDEFINED)
 		{
-			Update(left, leftEnd, m_tree[pos].value + m_tree[pos].extra, left, leftEnd, leftPos);
-			Update(rightBegin, right, m_tree[pos].value + m_tree[pos].extra, rightBegin, right, rightPos);
-			m_tree[pos].value = UNDEFINED;
-			m_tree[pos].extra = 0;
+			Update(left, leftEnd, s[pos].value + s[pos].extra, left, leftEnd, leftPos);
+			Update(rightBegin, right, s[pos].value + s[pos].extra, rightBegin, right, rightPos);
+			s[pos].value = UNDEFINED;
+			s[pos].extra = 0;
 		}
 
-		if (m_tree[pos].extra != 0)
+		if (s[pos].extra != 0)
 		{
-			Add(left, leftEnd, m_tree[pos].extra, left, leftEnd, leftPos);
-			Add(rightBegin, right, m_tree[pos].extra, rightBegin, right, rightPos);
-			m_tree[pos].extra = 0;
+			Add(left, leftEnd, s[pos].extra, left, leftEnd, leftPos);
+			Add(rightBegin, right, s[pos].extra, rightBegin, right, rightPos);
+			s[pos].extra = 0;
 		}
 
 		Add(qLeft, qRight, qExtra, left, leftEnd, leftPos);
 		Add(qLeft, qRight, qExtra, rightBegin, right, rightPos);
 
-		long long leftSum = m_tree[leftPos].sum + (leftEnd - left + 1) * m_tree[leftPos].extra;
-		long long rightSum = m_tree[rightPos].sum + (right - rightBegin + 1) * m_tree[rightPos].extra;
-		m_tree[pos].sum = leftSum + rightSum;
+		long long leftSum = s[leftPos].sum + (leftEnd - left + 1) * s[leftPos].extra;
+		long long rightSum = s[rightPos].sum + (right - rightBegin + 1) * s[rightPos].extra;
+		s[pos].sum = leftSum + rightSum;
 
-		int lValue = m_tree[leftPos].min + m_tree[leftPos].extra;
-		int rValue = m_tree[rightPos].min + m_tree[rightPos].extra;
-		m_tree[pos].min = std::min(lValue, rValue);
+		int lValue = s[leftPos].min + s[leftPos].extra;
+		int rValue = s[rightPos].min + s[rightPos].extra;
+		s[pos].min = std::min(lValue, rValue);
 	}
 
 	long long Rsq(int qLeft, int qRight, int left, int right, int pos)
@@ -183,12 +183,12 @@ private:
 		qRight = std::min(qRight, right);
 		if (qLeft == left && qRight == right)
 		{
-			return m_tree[pos].sum + m_tree[pos].extra * (right - left + 1);
+			return s[pos].sum + s[pos].extra * (right - left + 1);
 		}
 
-		if (m_tree[pos].value != UNDEFINED)
+		if (s[pos].value != UNDEFINED)
 		{
-			return (m_tree[pos].value + m_tree[pos].extra) * (qRight - qLeft + 1);
+			return (s[pos].value + s[pos].extra) * (qRight - qLeft + 1);
 		}
 
 		int leftEnd = (left + right) / 2;
@@ -198,7 +198,7 @@ private:
 
 		long long leftSum = Rsq(qLeft, qRight, left, leftEnd, leftPos);
 		long long rightSum = Rsq(qLeft, qRight, rightBegin, right, rightPos);
-		return (leftSum + rightSum) + m_tree[pos].extra * (qRight - qLeft + 1);
+		return (leftSum + rightSum) + s[pos].extra * (qRight - qLeft + 1);
 	}
 
 	int Rmq(int qLeft, int qRight, int left, int right, int pos)
@@ -211,12 +211,12 @@ private:
 		qRight = std::min(qRight, right);
 		if (qLeft == left && qRight == right)
 		{
-			return m_tree[pos].min + m_tree[pos].extra;
+			return s[pos].min + s[pos].extra;
 		}
 
-		if (m_tree[pos].value != UNDEFINED)
+		if (s[pos].value != UNDEFINED)
 		{
-			return m_tree[pos].min + m_tree[pos].extra;
+			return s[pos].min + s[pos].extra;
 		}
 
 		int leftEnd = (left + right) / 2;
@@ -226,10 +226,10 @@ private:
 
 		int leftMin = Rmq(qLeft, qRight, left, leftEnd, leftPos);
 		int rightMin = Rmq(qLeft, qRight, rightBegin, right, rightPos);
-		return std::min(leftMin, rightMin) + m_tree[pos].extra;
+		return std::min(leftMin, rightMin) + s[pos].extra;
 	}
 
-	std::vector<Segment> m_tree;
+	std::vector<Segment> s;
 	size_t m_arraySize;
 	size_t m_maxIndex;
 };
