@@ -18,14 +18,8 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SegmentTree.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ReadPrint.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SegmentTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
