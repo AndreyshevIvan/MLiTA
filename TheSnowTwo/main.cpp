@@ -24,7 +24,7 @@ int main()
 		int commandsCount;
 
 		ReadInput(input, columnCount, commandsCount);
-		CSegementTree powerLine(columnCount - 1);
+		CSegementTree powerLine(columnCount);
 		EnterProcess(input, powerLine);
 	}
 	catch (const std::exception &e)

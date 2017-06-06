@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <algorithm>
-#include "PowerLine.h"
+#include "IPowerLine.h"
 
 enum
 {
@@ -27,20 +27,20 @@ class CSegementTree : public IPowerLine
 public:
 	CSegementTree(size_t segmentsCount)
 	{
-		m_segmentsCount = segmentsCount;
-		std::vector<int> startArr(m_segmentsCount + 1, 0);
-		m_tree = std::vector<Segment>(m_segmentsCount * 4);
-		Build(1, m_segmentsCount, 1, startArr);
+		m_size = segmentsCount - 1;
+		std::vector<int> startArr(segmentsCount, 0);
+		m_tree = std::vector<Segment>(m_size * 4, { UNDEFINED , 0, 0 });
+		//Build(1, m_size, 1, startArr);
 	}
 
 	long long GetSnowSum(size_t leftCollumn, size_t rightColumn) const override
 	{
-		return Rsq(leftCollumn, rightColumn - 1, 1, m_segmentsCount, 1);
+		return Rsq(leftCollumn, rightColumn - 1, 1, m_size, 1);
 	}
 
 	void AddSnow(size_t leftColumn, size_t rightColumn, int snowCount) override
 	{
-		Add(leftColumn, rightColumn - 1, snowCount, 1, m_segmentsCount, 1);
+		Add(leftColumn, rightColumn - 1, snowCount, 1, m_size, 1);
 	}
 
 private:
@@ -52,9 +52,9 @@ private:
 			return;
 		}
 
-		int leftEnd = (left + right) / 2;
+		int leftEnd = (left + right) >> 1;
 		int rightBegin = leftEnd + 1;
-		int leftPos = pos * 2;
+		int leftPos = pos << 1;
 		int rightPos = leftPos + 1;
 
 		Build(left, leftEnd, leftPos, arr);
@@ -69,17 +69,19 @@ private:
 		{
 			return;
 		}
+
 		qLeft = std::max(qLeft, left);
 		qRight = std::min(qRight, right);
+
 		if (qLeft == left && qRight == right)
 		{
-			m_tree[pos] = { qValue, 0, qValue * (right - left + 1) };
+			m_tree[pos] = { qValue, 0, 1LL * qValue * (right - left + 1) };
 			return;
 		}
 
-		int leftEnd = (left + right) / 2;
+		int leftEnd = (left + right) >> 1;
 		int rightBegin = leftEnd + 1;
-		int leftPos = pos * 2;
+		int leftPos = pos << 1;
 		int rightPos = leftPos + 1;
 
 		if (m_tree[pos].value != UNDEFINED)
@@ -99,7 +101,10 @@ private:
 
 		Update(qLeft, qRight, qValue, left, leftEnd, leftPos);
 		Update(qLeft, qRight, qValue, rightBegin, right, rightPos);
-		m_tree[pos].sum = m_tree[leftPos].sum + m_tree[rightPos].sum;
+
+		long long leftSum = m_tree[leftPos].sum + (leftEnd - left + 1) * m_tree[leftPos].extra;
+		long long rightSum = m_tree[rightPos].sum + (right - rightBegin + 1) * m_tree[rightPos].extra;
+		m_tree[pos].sum = leftSum + rightSum;
 	}
 	void Add(int qLeft, int qRight, int qExtra, int left, int right, int pos)
 	{
@@ -117,9 +122,9 @@ private:
 			return;
 		}
 
-		int leftEnd = (left + right) / 2;
+		int leftEnd = (left + right) >> 1;
 		int rightBegin = leftEnd + 1;
-		int leftPos = pos * 2;
+		int leftPos = pos << 1;
 		int rightPos = leftPos + 1;
 
 		if (m_tree[pos].value != UNDEFINED)
@@ -156,25 +161,25 @@ private:
 
 		if (qLeft == left && qRight == right)
 		{
-			return m_tree[pos].sum + long long(m_tree[pos].extra) * (right - left + 1);
+			return m_tree[pos].sum + 1LL * m_tree[pos].extra * (right - left + 1);
 		}
 
 		if (m_tree[pos].value != UNDEFINED)
 		{
-			return long long(m_tree[pos].value + m_tree[pos].extra) * (qRight - qLeft + 1);
+			return 1LL * (m_tree[pos].value + m_tree[pos].extra) * (qRight - qLeft + 1);
 		}
 
-		int leftEnd = (left + right) / 2;
+		int leftEnd = (left + right) >> 1;
 		int rightBegin = leftEnd + 1;
-		int leftPos = pos * 2;
+		int leftPos = pos << 1;
 		int rightPos = leftPos + 1;
 
 		long long leftSum = Rsq(qLeft, qRight, left, leftEnd, leftPos);
 		long long rightSum = Rsq(qLeft, qRight, rightBegin, right, rightPos);
-		return (leftSum + rightSum) + long long(m_tree[pos].extra) * (qRight - qLeft + 1);
+		return (leftSum + rightSum) + 1LL * m_tree[pos].extra * (qRight - qLeft + 1);
 	}
 
-	size_t m_segmentsCount;
+	size_t m_size;
 	std::vector<Segment> m_tree;
 
 };
