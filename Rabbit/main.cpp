@@ -1,9 +1,45 @@
-#include <iostream>
 #include <string>
-#include <fstream>
 #include <algorithm>
+#include <map>
 
-size_t func(int ladderSize, int stepSize);
+#include "CCounter.h"
+
+struct ValuesMap
+{
+	ValuesMap()
+	{
+		CCounter zero;
+		CCounter one;
+		zero.Set(0);
+		one.Set(1);
+		TryAdd(0, zero);
+		TryAdd(1, one);
+	}
+
+	void TryAdd(size_t value, CCounter count)
+	{
+		auto record = valueMap.find(value);
+		if (record == valueMap.end())
+		{
+			valueMap.insert(std::make_pair(value, count));
+		}
+	}
+
+	bool Get(size_t value, CCounter &count)
+	{
+		auto record = valueMap.find(value);
+		if (record == valueMap.end())
+		{
+			return false;
+		}
+		count = record->second;
+		return true;
+	}
+
+	std::map<size_t, CCounter> valueMap;
+};
+
+CCounter func(ValuesMap &valuesMap, int ladderSize, int stepSize);
 
 int main()
 {
@@ -16,7 +52,9 @@ int main()
 		size_t stepSize = 0;
 		input >> ladderSize >> stepSize;
 
-		auto count = func(ladderSize, stepSize);
+		ValuesMap valuesMap;
+		auto count = func(valuesMap, ladderSize, stepSize);
+		output << count.ToString() << std::endl;
 	}
 	catch (const std::exception &e)
 	{
@@ -27,23 +65,28 @@ int main()
 	return 0;
 }
 
-size_t func(int ladderSize, int stepSize)
+CCounter func(ValuesMap &valuesMap, int maxLadder, int stepSize)
 {
-	if (ladderSize < 1)
+	CCounter result;
+
+	if (valuesMap.Get(maxLadder, result))
 	{
-		return 0;
+		return result;
 	}
 
-	if (ladderSize == 1)
+	if (maxLadder < 0)
 	{
-		return 1;
+		result.Set(0);
+		return result;
 	}
 
-	size_t result = (ladderSize - stepSize <= 0) ? 1 : 0;
+	result.Set((maxLadder - stepSize <= 0) ? 1 : 0);
 
-	for (auto i = ladderSize - 1; i >= ladderSize - stepSize; i--)
+	for (auto i = maxLadder - 1; i >= maxLadder - stepSize; i--)
 	{
-		result += func(i, stepSize);
+		auto newResult = func(valuesMap, i, stepSize);
+		result.Add(newResult);
+		valuesMap.TryAdd(i, newResult);
 	}
 
 	return result;
