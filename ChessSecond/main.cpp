@@ -3,7 +3,11 @@
 #include <string>
 #include "Chess.h"
 
-Field GetGameField(std::ifstream &input);
+Chess GetGame(std::ifstream &input);
+
+void MarkFireByRooks(Chess &game);
+void MarkFireByKnights(Chess &game);
+void MarkFireByBishops(Chess &game);
 
 int main()
 {
@@ -12,8 +16,13 @@ int main()
 		std::ifstream input("input.txt");
 		std::ofstream output("output.txt");
 
-		auto field = GetGameField(input);
-		(void)field;
+		Chess game = GetGame(input);
+
+		MarkFireByRooks(game);
+		MarkFireByKnights(game);
+		MarkFireByBishops(game);
+
+		output << game.onFireCount << std::endl;
 	}
 	catch (const std::exception &e)
 	{
@@ -23,7 +32,108 @@ int main()
 	return 0;
 }
 
-Field GetGameField(std::ifstream &input)
+void MarkFireByRooks(Chess &game)
+{
+	for (Coordinate figureCoord : game.rookCoords)
+	{
+		Coordinate tmpCoord = figureCoord;
+		do
+		{
+			game.SetFire(tmpCoord);
+			tmpCoord.second--;
+		} while (game.IsCoordValid(tmpCoord) && game.IsEmpty(tmpCoord));
+
+		tmpCoord = figureCoord;
+		do
+		{
+			game.SetFire(tmpCoord);
+			tmpCoord.second++;
+		} while (game.IsCoordValid(tmpCoord) && game.IsEmpty(tmpCoord));
+
+		tmpCoord = figureCoord;
+		do
+		{
+			game.SetFire(tmpCoord);
+			tmpCoord.first--;
+		} while (game.IsCoordValid(tmpCoord) && game.IsEmpty(tmpCoord));
+
+		tmpCoord = figureCoord;
+		do
+		{
+			game.SetFire(tmpCoord);
+			tmpCoord.first++;
+		} while (game.IsCoordValid(tmpCoord) && game.IsEmpty(tmpCoord));
+	}
+}
+void MarkFireByKnights(Chess &game)
+{
+	auto getKnightWays = [=](const Coordinate &knightCoord) {
+		auto h = knightCoord.first;
+		auto v = knightCoord.second;
+		std::vector<Coordinate> result;
+		result.push_back(std::make_pair(h - 2, v - 1));
+		result.push_back(std::make_pair(h - 2, v + 1));
+		result.push_back(std::make_pair(h + 2, v - 1));
+		result.push_back(std::make_pair(h + 2, v + 1));
+		result.push_back(std::make_pair(h - 1, v - 2));
+		result.push_back(std::make_pair(h + 1, v - 2));
+		result.push_back(std::make_pair(h - 1, v + 2));
+		result.push_back(std::make_pair(h + 1, v + 2));
+		return result;
+	};
+
+	for (Coordinate figureCoord : game.knightCoords)
+	{
+		for (auto knightCoord : getKnightWays(figureCoord))
+		{
+			if (!game.IsCoordValid(knightCoord))
+			{
+				continue;
+			}
+
+			game.SetFire(knightCoord);
+		}
+	}
+}
+void MarkFireByBishops(Chess &game)
+{
+	for (Coordinate figureCoord : game.bishopCoords)
+	{
+		Coordinate tmpCoord = figureCoord;
+		do
+		{
+			game.SetFire(tmpCoord);
+			tmpCoord.first--;
+			tmpCoord.second--;
+		} while (game.IsCoordValid(tmpCoord) && game.IsEmpty(tmpCoord));
+
+		tmpCoord = figureCoord;
+		do
+		{
+			game.SetFire(tmpCoord);
+			tmpCoord.first++;
+			tmpCoord.second++;
+		} while (game.IsCoordValid(tmpCoord) && game.IsEmpty(tmpCoord));
+
+		tmpCoord = figureCoord;
+		do
+		{
+			game.SetFire(tmpCoord);
+			tmpCoord.first--;
+			tmpCoord.second++;
+		} while (game.IsCoordValid(tmpCoord) && game.IsEmpty(tmpCoord));
+
+		tmpCoord = figureCoord;
+		do
+		{
+			game.SetFire(tmpCoord);
+			tmpCoord.first++;
+			tmpCoord.second--;
+		} while (game.IsCoordValid(tmpCoord) && game.IsEmpty(tmpCoord));
+	}
+}
+
+Chess GetGame(std::ifstream &input)
 {
 	size_t height;
 	size_t width;
@@ -43,5 +153,5 @@ Field GetGameField(std::ifstream &input)
 		}
 	}
 
-	return field;
+	return Chess(field);
 }
