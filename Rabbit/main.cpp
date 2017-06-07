@@ -1,51 +1,50 @@
-#include <fstream>
 #include <iostream>
-#include <climits>
+#include <string>
+#include <fstream>
+#include <algorithm>
 
-unsigned __int64 Calc(int iprev, int n, int k);
+size_t func(int ladderSize, int stepSize);
 
 int main()
 {
-	std::ifstream input("input.txt");
-
-	size_t ladderSize;
-	size_t rabbitStep;
-	input >> ladderSize >> rabbitStep;
-
 	try
 	{
-		std::cout << Calc(0, ladderSize, rabbitStep) << std::endl;
+		std::ifstream input("input.txt");
+		std::ofstream output("output.txt");
+
+		size_t ladderSize = 0;
+		size_t stepSize = 0;
+		input >> ladderSize >> stepSize;
+
+		auto count = func(ladderSize, stepSize);
 	}
 	catch (const std::exception &e)
 	{
-		std::cerr << e.what();
+		std::cerr << e.what() << std::endl;
+		return 1;
 	}
 
 	return 0;
 }
 
-unsigned __int64 Calc(int iprev, int n, int k)
+size_t func(int ladderSize, int stepSize)
 {
-	unsigned __int64 result = 0;
-
-	for (int i = 1; i <= k; i++)
+	if (ladderSize < 1)
 	{
-		if ((iprev + i) < n)
-		{
-			unsigned __int64 newResult = Calc(iprev + i, n, k);;
-			if (_UI64_MAX - result < newResult)
-			{
-				throw std::exception("overflow!");
-			}
-			result += newResult;
-			
-		}
-		else if ((iprev + i) == n)
-		{
-			result++;
-		}
+		return 0;
 	}
 
-	//std::cout << result << std::endl;
+	if (ladderSize == 1)
+	{
+		return 1;
+	}
+
+	size_t result = (ladderSize - stepSize <= 0) ? 1 : 0;
+
+	for (auto i = ladderSize - 1; i >= ladderSize - stepSize; i--)
+	{
+		result += func(i, stepSize);
+	}
+
 	return result;
 }
