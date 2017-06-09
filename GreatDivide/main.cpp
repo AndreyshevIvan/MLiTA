@@ -4,7 +4,7 @@
 
 #include "BigNumber.h"
 
-CBigNumber Read(std::ifstream &input);
+void Read(std::ifstream &input, CBigNumber &first, CBigNumber &second);
 
 int main()
 {
@@ -14,8 +14,9 @@ int main()
 		std::ifstream output("output.txt");
 		(void)output;
 
-		auto ticketNumber = Read(input);
-		(void)ticketNumber;
+		CBigNumber first;
+		CBigNumber second;
+		Read(input, first, second);
 	}
 	catch (const std::exception &e)
 	{
@@ -26,10 +27,11 @@ int main()
 	return 0;
 }
 
-CBigNumber Read(std::ifstream &input)
+void Read(std::ifstream &input, CBigNumber &first, CBigNumber &second)
 {
 	std::string numberStr;
 	getline(input, numberStr);
+	first = CBigNumber(numberStr);
 	getline(input, numberStr);
-	return CBigNumber(numberStr);
+	second = CBigNumber(numberStr);
 }
