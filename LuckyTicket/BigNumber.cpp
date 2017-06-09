@@ -7,16 +7,9 @@ namespace
 	const char* EMPTY_STR = "CBigNumber: create from empty string is not allowed.";
 }
 
-CBigNumber::CBigNumber()
-{
-	m_digits.push_back(0);
-}
-
 CBigNumber::CBigNumber(size_t number)
 {
-	std::string numberStr = std::to_string(number);
-	auto fromStr = CBigNumber(numberStr);
-	m_digits = fromStr.GetDigits();
+	this->CBigNumber::CBigNumber(std::to_string(number));
 }
 
 CBigNumber::CBigNumber(const std::string &numberStr)
@@ -51,6 +44,17 @@ Digits CBigNumber::GetDigits() const
 size_t CBigNumber::Length() const
 {
 	return m_digits.size();
+}
+
+size_t CBigNumber::DigitsSum() const
+{
+	size_t result = 0;
+	for (auto digit : m_digits)
+	{
+		result += digit;
+	}
+
+	return result;
 }
 
 std::string CBigNumber::ToString() const
