@@ -13,6 +13,14 @@ CBigNumber::CBigNumber()
 	m_size = m_digits.size();
 }
 
+CBigNumber::CBigNumber(size_t number)
+{
+	std::string numberStr = std::to_string(number);
+	auto fromStr = CBigNumber(numberStr);
+	m_digits = fromStr.GetDigits();
+	m_size = fromStr.Length();
+}
+
 CBigNumber::CBigNumber(const std::string &numberStr)
 {
 	if (numberStr.empty())

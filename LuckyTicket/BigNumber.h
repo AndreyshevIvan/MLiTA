@@ -8,6 +8,7 @@ class CBigNumber
 {
 public:
 	CBigNumber();
+	CBigNumber::CBigNumber(size_t number);
 	CBigNumber(const std::string &numberStr);
 	CBigNumber(const CBigNumber &bigNumber);
 
@@ -24,5 +25,7 @@ private:
 bool operator ==(const CBigNumber &left, const CBigNumber &right);
 bool operator <(const CBigNumber &left, const CBigNumber &right);
 bool operator !=(const CBigNumber &left, const CBigNumber &right);
+
+CBigNumber operator -(const CBigNumber& left, const CBigNumber &right);
 
 std::ostream &operator <<(std::ostream &stream, const CBigNumber &number);

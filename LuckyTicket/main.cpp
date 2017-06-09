@@ -4,7 +4,7 @@
 
 #include "BigNumber.h"
 
-void Read(std::ifstream &input, CBigNumber &first, CBigNumber &second);
+void Read(std::ifstream &input, CBigNumber &first);
 void Calc(const CBigNumber &first, const CBigNumber &second);
 
 int main()
@@ -15,10 +15,13 @@ int main()
 		std::ifstream output("output.txt");
 		(void)output;
 
-		CBigNumber first;
-		CBigNumber second;
-		Read(input, first, second);
-		std::cout << first << " " << second;
+		CBigNumber ticket;
+		Read(input, ticket);
+
+		CBigNumber zero;
+
+		auto minus = ticket - zero;
+		(void)minus;
 	}
 	catch (const std::exception &e)
 	{
@@ -29,13 +32,12 @@ int main()
 	return 0;
 }
 
-void Read(std::ifstream &input, CBigNumber &first, CBigNumber &second)
+void Read(std::ifstream &input, CBigNumber &number)
 {
 	std::string numberStr;
 	getline(input, numberStr);
-	first = CBigNumber(numberStr);
 	getline(input, numberStr);
-	second = CBigNumber(numberStr);
+	number = CBigNumber(numberStr);
 }
 
 void Calc(const CBigNumber &first, const CBigNumber &second)
