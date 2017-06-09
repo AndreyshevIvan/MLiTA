@@ -18,9 +18,10 @@ int main()
 		CBigNumber ticket;
 		Read(input, ticket);
 
-		CBigNumber zero;
+		CBigNumber first(1337);
+		CBigNumber second(338);
 
-		auto minus = ticket - zero;
+		auto minus = first - second;
 		(void)minus;
 	}
 	catch (const std::exception &e)

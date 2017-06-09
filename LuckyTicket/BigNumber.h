@@ -9,6 +9,7 @@ class CBigNumber
 public:
 	CBigNumber();
 	CBigNumber::CBigNumber(size_t number);
+	CBigNumber(const Digits &digits);
 	CBigNumber(const std::string &numberStr);
 	CBigNumber(const CBigNumber &bigNumber);
 
@@ -18,7 +19,6 @@ public:
 
 private:
 	Digits m_digits;
-	size_t m_size;
 
 };
 
