@@ -31,7 +31,7 @@ namespace
 
 	void ClearZeroes(Digits &digits)
 	{
-		for (auto pos = digits.size() - 1; pos != 1; pos--)
+		for (auto pos = digits.size() - 1; pos != 0; pos--)
 		{
 			if (digits[pos] != 0)
 			{
@@ -100,12 +100,6 @@ bool operator !=(const CBigNumber &left, const CBigNumber &right)
 	return !(left == right);
 }
 
-std::ostream &operator <<(std::ostream &stream, const CBigNumber &number)
-{
-	stream << number.ToString();
-	return stream;
-}
-
 CBigNumber operator -(const CBigNumber& left, const CBigNumber &right)
 {
 	if (left < right)
@@ -138,5 +132,5 @@ CBigNumber operator -(const CBigNumber& left, const CBigNumber &right)
 
 	ClearZeroes(newDigits);
 
-	return CBigNumber(newDigits);
+	return newDigits;
 }

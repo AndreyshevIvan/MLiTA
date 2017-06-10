@@ -34,5 +34,3 @@ bool operator <(const CBigNumber &left, const CBigNumber &right);
 bool operator !=(const CBigNumber &left, const CBigNumber &right);
 
 CBigNumber operator -(const CBigNumber& left, const CBigNumber &right);
-
-std::ostream &operator <<(std::ostream &stream, const CBigNumber &number);

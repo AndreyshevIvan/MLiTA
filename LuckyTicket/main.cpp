@@ -21,7 +21,8 @@ int main()
 		CBigNumber second;
 		Read(input, first, second);
 
-		output << CalcBestTicket(first, second);
+		auto result = CalcBestTicket(first, second);
+		output << result.ToString();
 	}
 	catch (const std::exception &e)
 	{
