@@ -36,6 +36,20 @@ CBigNumber::CBigNumber(const Digits &digits)
 	m_digits = digits;
 }
 
+void CBigNumber::SmartIncrement(size_t position)
+{
+	auto digit = GetDigit(position);
+
+	if (digit == 9)
+	{
+		SetDigit(position, 0);
+		SmartIncrement(position + 1);
+		return;
+	}
+
+	SetDigit(position, digit + 1);
+}
+
 Digits CBigNumber::GetDigits() const
 {
 	return m_digits;
@@ -74,7 +88,7 @@ char CBigNumber::GetDigitChar(size_t digitPosition) const
 		throw std::exception(INVALID_DIGIT_NUM);
 	}
 
-	return Utils::Ch(m_digits[digitPosition]);
+	return m_digits[digitPosition] + '0';
 }
 
 void CBigNumber::SetDigit(size_t digitPosition, unsigned short value)
@@ -99,7 +113,7 @@ std::string CBigNumber::ToString() const
 	return result;
 }
 
-std::pair<CBigNumber, CBigNumber> CBigNumber::ToPair() const
+std::pair<CBigNumber, CBigNumber> CBigNumber::Split() const
 {
 	std::string firstStr;
 	std::string secondStr;

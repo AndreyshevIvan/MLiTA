@@ -44,17 +44,9 @@ namespace
 
 bool operator <(const CBigNumber &left, const CBigNumber &right)
 {
-	if (left == right)
+	if (left.GetLength() != right.GetLength())
 	{
-		return false;
-	}
-
-	auto leftLen = left.GetLength();
-	auto rightLen = right.GetLength();
-
-	if (leftLen != rightLen)
-	{
-		return leftLen < rightLen;
+		return left.GetLength() < right.GetLength();
 	}
 
 	auto leftDigits = left.GetDigits();
@@ -70,7 +62,6 @@ bool operator <(const CBigNumber &left, const CBigNumber &right)
 		{
 			return false;
 		}
-
 		digitNum--;
 	}
 
@@ -100,25 +91,15 @@ bool operator ==(const CBigNumber &left, const CBigNumber &right)
 	return true;
 }
 
-bool operator !=(const CBigNumber &left, const CBigNumber &right)
-{
-	return !(left == right);
-}
-
 CBigNumber operator -(const CBigNumber& left, const CBigNumber &right)
 {
 	if (left < right)
 	{
 		throw std::exception(LEFT_LESS);
 	}
-	if (left == right)
-	{
-		return 0;
-	}
 
 	auto leftDigits = left.GetDigits();
 	auto rightDigits = right.GetDigits();
-	Digits newDigits;
 	size_t calcPos = 0;
 
 	for (; calcPos < right.GetLength(); calcPos++)
@@ -127,15 +108,10 @@ CBigNumber operator -(const CBigNumber& left, const CBigNumber &right)
 		{
 			TakeTen(leftDigits, calcPos);
 		}
-		newDigits.push_back(leftDigits[calcPos] - rightDigits[calcPos]);
+		leftDigits[calcPos] -= rightDigits[calcPos];
 	}
 
-	for (; calcPos < left.GetLength(); calcPos++)
-	{
-		newDigits.push_back(leftDigits[calcPos]);
-	}
+	ClearZeroes(leftDigits);
 
-	ClearZeroes(newDigits);
-
-	return newDigits;
+	return leftDigits;
 }

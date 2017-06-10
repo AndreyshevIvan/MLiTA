@@ -25,7 +25,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BigNumber.h" />
-    <ClInclude Include="Utils.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{28BCBB20-05E5-4630-9254-E6CBE5F2CB68}</ProjectGuid>

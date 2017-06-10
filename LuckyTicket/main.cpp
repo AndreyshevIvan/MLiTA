@@ -8,7 +8,6 @@ CBigNumber CalcTicketsForLuck(const CBigNumber &first, const CBigNumber &second)
 CBigNumber GetLargeFirstPart(const CBigNumber &first, CBigNumber second);
 CBigNumber GetFirstPartTicket(const CBigNumber &first, const CBigNumber &second);
 CBigNumber CreateTicket(const CBigNumber &first, const CBigNumber &second);
-void IncrementFromPos(CBigNumber &ticket, size_t pos);
 
 int main()
 {
@@ -22,7 +21,7 @@ int main()
 		Read(input, first, second);
 
 		auto result = CalcTicketsForLuck(first, second);
-		output << result.ToString();
+		output << result.ToString() << std::endl;
 	}
 	catch (const std::exception &e)
 	{
@@ -51,7 +50,7 @@ CBigNumber CalcTicketsForLuck(const CBigNumber &first, const CBigNumber &second)
 	}
 
 	auto firstPartTicket = GetFirstPartTicket(first, second);
-	auto ticketParts = firstPartTicket.ToPair();
+	auto ticketParts = firstPartTicket.Split();
 	auto bestTicket = GetLargeFirstPart(ticketParts.first, ticketParts.second);
 
 	return bestTicket - ticket;
@@ -83,29 +82,15 @@ CBigNumber GetFirstPartTicket(const CBigNumber &first, const CBigNumber &second)
 	for (size_t pos = 0; pos < first.GetLength(); pos++)
 	{
 		ticket.SetDigit(pos, 0);
-		IncrementFromPos(ticket, pos + 1);
+		ticket.SmartIncrement(pos + 1);
 
-		auto ticketParts = ticket.ToPair();
+		auto ticketParts = ticket.Split();
 		auto firstSum = ticketParts.first.GetDigitSum();
 		auto secondSum = ticketParts.second.GetDigitSum();
 		if (firstSum >= secondSum) break;
 	}
 
 	return ticket;
-}
-
-void IncrementFromPos(CBigNumber &ticket, size_t pos)
-{
-	auto digit = ticket.GetDigit(pos);
-
-	if (digit == 9)
-	{
-		ticket.SetDigit(pos, 0);
-		IncrementFromPos(ticket, pos + 1);
-		return;
-	}
-
-	ticket.SetDigit(pos, digit + 1);
 }
 
 void Read(std::ifstream &input, CBigNumber &first, CBigNumber &second)
