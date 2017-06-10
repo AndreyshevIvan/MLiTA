@@ -12,11 +12,11 @@ CBigNumber::CBigNumber(size_t number)
 	this->CBigNumber::CBigNumber(std::to_string(number));
 }
 
-CBigNumber::CBigNumber(const std::string &numberStr)
+CBigNumber::CBigNumber(std::string numberStr)
 {
 	if (numberStr.empty())
 	{
-		throw std::exception(EMPTY_STR);
+		numberStr = "0";
 	}
 
 	for (int i = numberStr.size() - 1; i >= 0; i--)
@@ -97,4 +97,25 @@ std::string CBigNumber::ToString() const
 	}
 
 	return result;
+}
+
+std::pair<CBigNumber, CBigNumber> CBigNumber::ToPair() const
+{
+	std::string firstStr;
+	std::string secondStr;
+	auto str = ToString();
+	auto length = GetLength();
+
+	for(size_t i = 0; i < length; i++)
+	{
+		if (i + 1 <= length / 2)
+		{
+			firstStr += str[i];
+			continue;
+		}
+
+		secondStr += str[i];
+	}
+
+	return std::make_pair(firstStr, secondStr);
 }

@@ -66,6 +66,11 @@ bool operator <(const CBigNumber &left, const CBigNumber &right)
 		{
 			return true;
 		}
+		else if (leftDigits[digitNum] > rightDigits[digitNum])
+		{
+			return false;
+		}
+
 		digitNum--;
 	}
 
@@ -108,7 +113,7 @@ CBigNumber operator -(const CBigNumber& left, const CBigNumber &right)
 	}
 	if (left == right)
 	{
-		return CBigNumber(0);
+		return 0;
 	}
 
 	auto leftDigits = left.GetDigits();

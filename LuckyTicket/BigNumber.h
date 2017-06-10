@@ -11,7 +11,7 @@ class CBigNumber
 public:
 	CBigNumber(size_t number = 0);
 	CBigNumber(const Digits &digits);
-	CBigNumber(const std::string &numberStr);
+	CBigNumber(std::string numberStr);
 	CBigNumber(const CBigNumber &bigNumber);
 
 	Digits GetDigits() const;
@@ -23,6 +23,7 @@ public:
 	void SetDigit(size_t digitPosition, unsigned short value);
 
 	std::string ToString() const;
+	std::pair<CBigNumber, CBigNumber> ToPair() const;
 
 private:
 	Digits m_digits;

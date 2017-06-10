@@ -6,7 +6,7 @@ public:
 
 	static int Int(char symbol)
 	{
-		return int(symbol - '0');
+		return symbol - '0';
 	}
 	static char Ch(int number)
 	{
