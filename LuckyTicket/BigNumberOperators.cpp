@@ -49,8 +49,8 @@ bool operator <(const CBigNumber &left, const CBigNumber &right)
 		return false;
 	}
 
-	auto leftLen = left.Length();
-	auto rightLen = right.Length();
+	auto leftLen = left.GetLength();
+	auto rightLen = right.GetLength();
 
 	if (leftLen != rightLen)
 	{
@@ -60,7 +60,7 @@ bool operator <(const CBigNumber &left, const CBigNumber &right)
 	auto leftDigits = left.GetDigits();
 	auto rightDigits = right.GetDigits();
 
-	for (auto digitNum = left.Length() - 1; digitNum >= 0;)
+	for (int digitNum = left.GetLength() - 1; digitNum >= 0;)
 	{
 		if (leftDigits[digitNum] < rightDigits[digitNum])
 		{
@@ -74,7 +74,7 @@ bool operator <(const CBigNumber &left, const CBigNumber &right)
 
 bool operator ==(const CBigNumber &left, const CBigNumber &right)
 {
-	if (left.Length() != right.Length())
+	if (left.GetLength() != right.GetLength())
 	{
 		return false;
 	}
@@ -83,7 +83,7 @@ bool operator ==(const CBigNumber &left, const CBigNumber &right)
 	auto leftDigits = left.GetDigits();
 	auto rightDigits = right.GetDigits();
 
-	while (digitNum != left.Length())
+	while (digitNum != left.GetLength())
 	{
 		if (leftDigits[digitNum] != rightDigits[digitNum])
 		{
@@ -122,7 +122,7 @@ CBigNumber operator -(const CBigNumber& left, const CBigNumber &right)
 	Digits newDigits;
 	size_t calcPos = 0;
 
-	for (; calcPos < right.Length(); calcPos++)
+	for (; calcPos < right.GetLength(); calcPos++)
 	{
 		if (leftDigits[calcPos] < rightDigits[calcPos])
 		{
@@ -131,7 +131,7 @@ CBigNumber operator -(const CBigNumber& left, const CBigNumber &right)
 		newDigits.push_back(leftDigits[calcPos] - rightDigits[calcPos]);
 	}
 
-	for (; calcPos < left.Length(); calcPos++)
+	for (; calcPos < left.GetLength(); calcPos++)
 	{
 		newDigits.push_back(leftDigits[calcPos]);
 	}

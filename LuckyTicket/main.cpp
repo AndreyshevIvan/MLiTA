@@ -5,28 +5,23 @@
 #include "BigNumber.h"
 
 void Read(std::ifstream &input, CBigNumber &first, CBigNumber &second);
-size_t Calc(const CBigNumber &first, const CBigNumber &second);
-size_t EasyCalc(size_t first, size_t second);
-
-bool IsLucky(const CBigNumber &firstPart, const CBigNumber &secondPart);
-bool IsLucky(size_t firstPart, size_t secondPart);
+CBigNumber CalcBestTicket(const CBigNumber &first, const CBigNumber &second);
+CBigNumber GetLargeTicket(const CBigNumber &first, CBigNumber second);
+CBigNumber CreateTicket(const CBigNumber &first, const CBigNumber &second);
+bool IsLucky(const CBigNumber &first, const CBigNumber &second);
 
 int main()
 {
 	try
 	{
 		std::ifstream input("input.txt");
-		std::ifstream output("output.txt");
-		(void)output;
+		std::ofstream output("output.txt");
 
 		CBigNumber first;
 		CBigNumber second;
 		Read(input, first, second);
 
-		//auto minus = first - second;
-		//(void)minus;
-
-		IsLucky(1337, 1400);
+		output << CalcBestTicket(first, second);
 	}
 	catch (const std::exception &e)
 	{
@@ -35,6 +30,45 @@ int main()
 	}
 
 	return 0;
+}
+
+CBigNumber CalcBestTicket(const CBigNumber &first, const CBigNumber &second)
+{
+	auto firstSum = first.GetDigitSum();
+	auto secondSum = second.GetDigitSum();
+	auto ticket = CreateTicket(first, second);
+
+	if (firstSum > secondSum)
+	{
+		auto bestTicket = GetLargeTicket(first, second);
+		return bestTicket - ticket;
+	}
+
+	return 0;
+}
+
+CBigNumber GetLargeTicket(const CBigNumber &first, CBigNumber second)
+{
+	int sumDiff = first.GetDigitSum() - second.GetDigitSum();
+
+	for (size_t pos = 0; pos < second.GetLength(); pos++)
+	{
+		auto digit = second.GetDigit(pos);
+		auto allowedToAdd = 9 - digit;
+		auto toAdd = (allowedToAdd > sumDiff) ? sumDiff : allowedToAdd;
+		
+		second.SetDigit(pos, digit + toAdd);
+		sumDiff -= toAdd;
+
+		if (sumDiff <= 0) break;
+	}
+
+	return CreateTicket(first, second);
+}
+
+bool IsLucky(const CBigNumber &first, const CBigNumber &second)
+{
+	return first.GetDigitSum() == second.GetDigitSum();
 }
 
 void Read(std::ifstream &input, CBigNumber &first, CBigNumber &second)
@@ -47,7 +81,7 @@ void Read(std::ifstream &input, CBigNumber &first, CBigNumber &second)
 	std::string firstStr;
 	std::string secondStr;
 
-	for (size_t i = 0; i < std::stoi(N); i++)
+	for (size_t i = 0; i < (size_t)std::stoi(N); i++)
 	{
 		firstStr += ticketStr[i];
 		secondStr += ticketStr[i + std::stoi(N)];
@@ -57,48 +91,9 @@ void Read(std::ifstream &input, CBigNumber &first, CBigNumber &second)
 	second = CBigNumber(secondStr);
 }
 
-size_t Calc(const CBigNumber &first, const CBigNumber &second)
+CBigNumber CreateTicket(const CBigNumber &first, const CBigNumber &second)
 {
-	(void)first;
-	(void)second;
-	return 0;
-}
-
-size_t EasyCalc(size_t first, size_t second)
-{
-	if (first == second)
-	{
-		return 0;
-	}
-	else if (first < second)
-	{
-		std::swap(first, second);
-	}
-
-
-
-	return 0;
-}
-
-bool IsLucky(const CBigNumber &firstPart, const CBigNumber &secondPart)
-{
-	return firstPart.DigitsSum() == secondPart.DigitsSum();
-}
-
-bool IsLucky(size_t firstPart, size_t secondPart)
-{
-	auto calc_digits_sum = [](size_t number) {
-		size_t sum = 0;
-		while (number > 0)
-		{
-			sum += number % 10;
-			number = number / 10;
-		}
-		return sum;
-	};
-
-	auto firstSum = calc_digits_sum(firstPart);
-	auto secondSum = calc_digits_sum(secondPart);
-
-	return firstPart == secondPart;
+	auto firstPart = first.ToString();
+	auto secondPart = second.ToString();
+	return firstPart + secondPart;
 }

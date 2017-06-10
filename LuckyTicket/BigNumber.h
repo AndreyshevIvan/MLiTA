@@ -2,6 +2,8 @@
 #include <vector>
 #include <string>
 
+#include "Utils.h"
+
 typedef std::vector<unsigned short> Digits;
 
 class CBigNumber
@@ -13,10 +15,14 @@ public:
 	CBigNumber(const CBigNumber &bigNumber);
 
 	Digits GetDigits() const;
-	size_t Length() const;
-	size_t DigitsSum() const;
+	unsigned short GetDigit(size_t digitPosition) const;
+	char GetDigitChar(size_t digitPosition) const;
+	size_t GetLength() const;
+	size_t GetDigitSum() const;
+
+	void SetDigit(size_t digitPosition, unsigned short value);
+
 	std::string ToString() const;
-	
 
 private:
 	Digits m_digits;
