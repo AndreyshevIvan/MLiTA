@@ -47,7 +47,13 @@ void CBigNumber::SmartIncrement(size_t position)
 		return;
 	}
 
-	SetDigit(position, digit + 1);
+	auto nextPos = digit + 1;
+	if (nextPos == GetLength())
+	{
+		m_digits.push_back(0);
+	}
+
+	SetDigit(position, nextPos);
 }
 
 Digits CBigNumber::GetDigits() const

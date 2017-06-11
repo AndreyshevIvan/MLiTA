@@ -64,7 +64,6 @@ bool operator <(const CBigNumber &left, const CBigNumber &right)
 		}
 		digitNum--;
 	}
-
 	return false;
 }
 

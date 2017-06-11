@@ -95,22 +95,15 @@ CBigNumber GetFirstPartTicket(const CBigNumber &first, const CBigNumber &second)
 
 void Read(std::ifstream &input, CBigNumber &first, CBigNumber &second)
 {
-	std::string N;
-	getline(input, N);
+	size_t N;
+	input >> N;
 	std::string ticketStr;
 	getline(input, ticketStr);
+	input >> ticketStr;
+	CBigNumber ticket(ticketStr);
 
-	std::string firstStr;
-	std::string secondStr;
-
-	for (size_t i = 0; i < (size_t)std::stoi(N); i++)
-	{
-		firstStr += ticketStr[i];
-		secondStr += ticketStr[i + std::stoi(N)];
-	}
-
-	first = firstStr;
-	second = secondStr;
+	first = ticket.Split().first;
+	second = ticket.Split().second;
 }
 
 CBigNumber CreateTicket(const CBigNumber &first, const CBigNumber &second)
