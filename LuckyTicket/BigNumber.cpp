@@ -38,22 +38,22 @@ CBigNumber::CBigNumber(const Digits &digits)
 
 void CBigNumber::SmartIncrement(size_t position)
 {
-	auto digit = GetDigit(position);
-
-	if (digit == 9)
-	{
-		SetDigit(position, 0);
-		SmartIncrement(position + 1);
-		return;
-	}
-
-	auto nextPos = digit + 1;
-	if (nextPos == GetLength())
+	if (position == GetLength())
 	{
 		m_digits.push_back(0);
 	}
 
-	SetDigit(position, nextPos);
+	auto digit = GetDigit(position);
+	auto nextPos = position + 1;
+
+	if (digit == 9)
+	{
+		SetDigit(position, 0);
+		SmartIncrement(nextPos);
+		return;
+	}
+
+	SetDigit(position, digit + 1);
 }
 
 Digits CBigNumber::GetDigits() const

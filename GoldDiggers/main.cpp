@@ -4,7 +4,7 @@
 #include "DiggersGold.h"
 
 void Read(std::ifstream &input, CDiggersGold &gold, size_t &sum);
-void Write(std::ofstream &output, const std::vector<size_t> &items = {});
+void Write(std::ofstream &output, const std::vector<unsigned short> &items = {});
 
 int main()
 {
@@ -35,7 +35,7 @@ int main()
 	return 0;
 }
 
-void Write(std::ofstream &output, const std::vector<size_t> &items)
+void Write(std::ofstream &output, const std::vector<unsigned short> &items)
 {
 	output << items.size() << std::endl;
 	if (items.size() == 0)
