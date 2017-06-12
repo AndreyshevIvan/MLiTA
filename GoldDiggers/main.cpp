@@ -1,10 +1,10 @@
 #include <fstream>
 #include <iostream>
 
-#include "ItemsSearch.h"
+#include "DiggersGold.h"
 
-void Read(std::ifstream &input, std::vector<size_t> &gold, size_t &sum);
-void Write(std::ofstream &output, const std::vector<size_t> &items);
+void Read(std::ifstream &input, CDiggersGold &gold, size_t &sum);
+void Write(std::ofstream &output, const std::vector<size_t> &items = {});
 
 int main()
 {
@@ -14,16 +14,16 @@ int main()
 		std::ofstream output("output.txt");
 
 		size_t sum = 0;
-		std::vector<size_t> gold;
+		CDiggersGold gold;
 		Read(input, gold, sum);
 
 		if (sum % 3 != 0)
 		{
-			Write(output, { 0 });
-			return;
+			Write(output);
+			return 0;
 		}
 
-		CItemsSearch search(gold);
+		CDiggersGold search(gold);
 		Write(output, search.GetEqualPack(sum / 3));
 	}
 	catch (const std::exception &e)
@@ -37,7 +37,13 @@ int main()
 
 void Write(std::ofstream &output, const std::vector<size_t> &items)
 {
-	for (auto i = 0; i < items.size(); i++)
+	output << items.size() << std::endl;
+	if (items.size() == 0)
+	{
+		return;
+	}
+
+	for (size_t i = 0; i < items.size(); i++)
 	{
 		output << items[i];
 		if (i != items.size() - 1) output << ' ';
@@ -46,17 +52,16 @@ void Write(std::ofstream &output, const std::vector<size_t> &items)
 	output << std::endl;
 }
 
-void Read(std::ifstream &input, std::vector<size_t> &gold, size_t &sum)
+void Read(std::ifstream &input, CDiggersGold &gold, size_t &sum)
 {
-	size_t goldCount;
-	gold.clear();
+	int goldCount;
 	input >> goldCount;
 
 	while (goldCount > 0)
 	{
-		size_t goldWeight;
+		int goldWeight;
 		input >> goldWeight;
-		gold.push_back(goldWeight);
+		gold.AddGold(goldWeight);
 		sum += goldWeight;
 		goldCount--;
 	}
