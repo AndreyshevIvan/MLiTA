@@ -40,7 +40,7 @@ CBigNumber CalcTicketsForLuck(const CBigNumber &first, const CBigNumber &second)
 
 	if (firstSum == secondSum)
 	{
-		return 0;
+		return CBigNumber(0);
 	}
 
 	if (firstSum > secondSum)

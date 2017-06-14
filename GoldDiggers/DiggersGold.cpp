@@ -1,80 +1,55 @@
 #include "DiggersGold.h"
+#include <iostream>
 
-CDiggersGold::CDiggersGold()
+CDiggersGold::CDiggersGold(const std::vector<short> &items, size_t maxWeight)
 {
-	m_items = { UNDEFINED };
+	m_weight = maxWeight;
+	m_items = items;
+	Build();
 }
 
-void CDiggersGold::AddGold(unsigned short value)
+std::vector<short> CDiggersGold::GetResult()
 {
-	m_items.push_back(value);
-}
+	size_t weight = m_weight;
+	std::vector<short> result;
 
-std::vector<unsigned short> CDiggersGold::GetEqualPack(size_t maxWeight) const
-{
-	auto build = GetBuildContainer(maxWeight);
-	size_t maxValue = 0;
-
-	for (int i = 1; i < (int)build.size(); i++)
+	if (m_build[weight].itemsCount == UNDEFINED)
 	{
-		for (int j = 1; j < (int)build.front().size(); j++)
-		{
-			if (j < m_items[i])
-			{
-				build[i][j].weight = build[i - 1][j].weight;
-				build[i][j].pack = build[i - 1][j].pack;
-				continue;
-			}
-
-			auto withoutNext = build[i - 1][j - m_items[i]].weight + m_items[i];
-			auto prev = build[i - 1][j].weight;
-
-			if (withoutNext > prev)
-			{
-				build[i][j].weight = withoutNext;
-				if (build[i][j].weight > maxValue)
-				{
-					build[i][j].pack = new std::vector<unsigned short>(*build[i - 1][j - m_items[i]].pack);
-					build[i][j].pack->push_back(m_items[i]);
-					maxValue = build[i][j].weight;
-				}
-				else
-				{
-					build[i][j].pack = build[i - 1][j - m_items[i]].pack;
-				}
-			}
-			else
-			{
-				build[i][j].weight = build[i - 1][j].weight;
-				build[i][j].pack = build[i - 1][j].pack;
-			}
-
-			if (build[i][j].weight == maxWeight)
-			{
-				return *build[i][j].pack;
-			}
-		}
+		return {};
 	}
 
-	return{};
-}
-
-BuildContainer CDiggersGold::GetBuildContainer(size_t maxWeight) const
-{
-	auto result = std::vector<std::vector<GoldNode>>(m_items.size());
-
-	for (auto &row : result)
+	while (weight != 0)
 	{
-		row = std::vector<GoldNode>(maxWeight + 1);
-		row.front().pack = new std::vector<unsigned short>;
-		row.front().weight = UNDEFINED;
-	}
-
-	for (auto &firstRowItem : result.front())
-	{
-		firstRowItem.weight = UNDEFINED;
-		firstRowItem.pack = new std::vector<unsigned short>;
+		auto itemNumber = m_build[weight].used;
+		result.push_back(itemNumber);
+		weight -= m_items[itemNumber - 1];
 	}
 
 	return result;
+}
+
+void CDiggersGold::Build()
+{
+	m_build = std::vector<BuildNode>(m_weight + 1, { UNDEFINED, UNDEFINED });
+	m_build[0] = { 0, UNDEFINED };
+
+	for (int i = int(m_items.size()) - 1; i >= 0; i--)
+	{
+		std::cout << i << std::endl;
+		for (int j = m_weight - m_items[i]; j >= 0; j--)
+		{
+			std::cout << j << std::endl;
+			auto current = &m_build[j];
+			auto newNode = &m_build[j + m_items[i]];
+
+			if (current->itemsCount == UNDEFINED ||
+				newNode->itemsCount != UNDEFINED)
+			{
+				continue;
+			}
+
+			newNode->itemsCount = current->itemsCount + 1;
+			newNode->used = i + 1;
+		}
+	}
 }

@@ -4,29 +4,25 @@
 
 enum
 {
-	UNDEFINED = 0,
+	UNDEFINED = -1,
 };
 
-struct GoldNode
+struct BuildNode
 {
-	int weight;
-	std::vector<unsigned short>* pack;
+	int itemsCount;
+	int used;
 };
-
-typedef std::vector<std::vector<GoldNode>> BuildContainer;
 
 class CDiggersGold
 {
 public:
-	CDiggersGold();
-
-	void AddGold(unsigned short value);
-	std::vector<unsigned short> GetEqualPack(size_t maxWeight) const;
+	CDiggersGold::CDiggersGold(const std::vector<short> &items, size_t maxWeight);
+	std::vector<short> GetResult();
 
 private:
-	BuildContainer GetBuildContainer(size_t maxWeight) const;
-
-	std::vector<unsigned short> m_items;
+	void Build();
+	std::vector<BuildNode> m_build;
+	std::vector<short> m_items;
+	size_t m_weight;
 
 };
-
